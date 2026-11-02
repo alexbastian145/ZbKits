@@ -126,7 +126,7 @@ public class ItemBuilder {
    public ItemBuilder skullOwner(OfflinePlayer player) {
       SkullMeta itemMeta = (SkullMeta)this.itemStack.getItemMeta();
       if (itemMeta != null) {
-         CompletableFuture<org.bukkit.profile.PlayerProfile> var10000 = player.getPlayerProfile().update();
+         var var10000 = player.getPlayerProfile().update();
          Objects.requireNonNull(itemMeta);
          var10000.thenAcceptAsync(itemMeta::setOwnerProfile, (runnable) -> Bukkit.getScheduler().runTask(Utils.plugin(), runnable));
       }
@@ -330,7 +330,7 @@ public class ItemBuilder {
    public ItemBuilder clearAttributes() {
       ItemMeta meta = this.itemStack.getItemMeta();
       if (meta != null) {
-         Multimap var10000 = (Multimap)Objects.requireNonNull(meta.getAttributeModifiers());
+         Multimap<org.bukkit.attribute.Attribute, org.bukkit.attribute.AttributeModifier> var10000 = Objects.requireNonNull(meta.getAttributeModifiers());
          Objects.requireNonNull(meta);
          var10000.forEach(meta::removeAttributeModifier);
       }
