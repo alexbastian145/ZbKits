@@ -28,8 +28,8 @@ public final class CommodoreProvider {
          try {
             ReflectionCommodore.ensureSetup();
             return ReflectionCommodore::new;
-         } catch (Throwable e) {
-            printDebugInfo(e);
+         } catch (Throwable ex) {
+            printDebugInfo(ex);
             return null;
          }
       }

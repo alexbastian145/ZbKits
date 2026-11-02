@@ -20,9 +20,9 @@ public class MenuListener implements Listener {
    public void onClick(InventoryClickEvent event) {
       if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
          Player player = (Player)event.getWhoClicked();
-         InventoryHolder button = event.getInventory().getHolder();
-         if (button instanceof Menu) {
-            Menu menu = (Menu)button;
+         InventoryHolder holder = event.getInventory().getHolder();
+         if (holder instanceof Menu) {
+            Menu menu = (Menu)holder;
             Button button = menu.button(event.getSlot());
             if (button != null) {
                Button.ButtonListener listener = button.listener();
@@ -32,9 +32,9 @@ public class MenuListener implements Listener {
             }
          }
 
-         button = event.getInventory().getHolder();
-         if (button instanceof PaginatedMenu) {
-            PaginatedMenu menu = (PaginatedMenu)button;
+         holder = event.getInventory().getHolder();
+         if (holder instanceof PaginatedMenu) {
+            PaginatedMenu menu = (PaginatedMenu)holder;
             Button stickyButton = menu.stickyButton(event.getSlot());
             if (menu.currentPageItemEnabled() && event.getSlot() == menu.currentPageSlot()) {
                event.setCancelled(true);

@@ -24,7 +24,7 @@ public class Sidebar extends SidebarHandler<Component> {
 
    protected void sendLineChange(int score) throws Throwable {
       Component line = (Component)this.lineByScore(score);
-      this.sendTeamPacket(score, SidebarHandler.TeamMode.UPDATE, line, (Object)null);
+      this.sendTeamPacket(score, SidebarHandler.TeamMode.UPDATE, line, null);
    }
 
    protected Object toMinecraftComponent(Component component) throws Throwable {

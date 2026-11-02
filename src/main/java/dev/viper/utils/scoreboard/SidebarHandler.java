@@ -143,7 +143,7 @@ public abstract class SidebarHandler<S> {
             } else {
                for(int i = oldLinesCopy.size(); i < linesSize; ++i) {
                   this.sendScorePacket(i, SidebarHandler.ScoreboardAction.CHANGE);
-                  this.sendTeamPacket(i, SidebarHandler.TeamMode.CREATE, (Object)null, (Object)null);
+                  this.sendTeamPacket(i, SidebarHandler.TeamMode.CREATE, null, null);
                }
             }
          }
@@ -261,7 +261,7 @@ public abstract class SidebarHandler<S> {
    }
 
    protected void sendTeamPacket(int score, TeamMode mode) throws Throwable {
-      this.sendTeamPacket(score, mode, (Object)null, (Object)null);
+      this.sendTeamPacket(score, mode, null, null);
    }
 
    protected void sendTeamPacket(int score, TeamMode mode, S prefix, S suffix) throws Throwable {
@@ -275,7 +275,7 @@ public abstract class SidebarHandler<S> {
          } else {
             if (SidebarHandler.VersionType.V1_17.isHigherOrEqual()) {
                Object team = PACKET_SB_SERIALIZABLE_TEAM.invoke();
-               this.componentField(team, (Object)null, 0);
+               this.componentField(team, (S)null, 0);
                this.field(team, CHAT_FORMAT_ENUM, RESET_FORMATTING);
                this.componentField(team, prefix, 1);
                this.componentField(team, suffix, 2);

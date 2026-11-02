@@ -41,7 +41,7 @@ public class ByteSerializer {
 
       for(int length = inputStream.readInt(); length != -1; length = inputStream.readInt()) {
          if (length == 0) {
-            items.add((Object)null);
+            items.add(null);
          } else {
             byte[] data = new byte[length];
             inputStream.readFully(data, 0, data.length);

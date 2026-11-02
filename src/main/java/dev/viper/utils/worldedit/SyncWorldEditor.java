@@ -95,7 +95,7 @@ public class SyncWorldEditor {
       File file = new File(path);
 
       try {
-         ClipboardWriter writer = BuiltInClipboardFormat.FAST.getWriter(new FileOutputStream(file));
+         ClipboardWriter writer = BuiltInClipboardFormat.FAST_V2.getWriter(new FileOutputStream(file));
          writer.write(clipboard);
          writer.close();
       } catch (IOException e) {
