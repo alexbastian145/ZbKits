@@ -3,17 +3,14 @@ package dev.viper.zbkits.menus;
 import dev.viper.utils.compat.Compat;
 import dev.viper.zbkits.zbKits;
 import dev.viper.zbkits.utils.config.MenuConfig;
-import dev.viper.utils.folia.FoliaUtils;
 import dev.viper.utils.menu.xmenu.GuiBuilder;
 import dev.viper.utils.menu.xmenu.ItemBuilderGUI;
 import dev.viper.utils.text.color.ColorizeText;
-import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -56,23 +53,14 @@ public class AutoRekitMenu extends GuiBuilder {
       int slot = CONFIG.getConfig().getInt(configPath + ".slot");
       ItemStack toggleAutoRekit = createItem(configPath, defaultMaterial);
       setToggleAutoRekitLore(toggleAutoRekit, player);
-      if (FoliaUtils.isFolia()) {
-         AsyncScheduler asyncScheduler = Bukkit.getAsyncScheduler();
-         inventory.setItem(slot, toggleAutoRekit, (p) -> asyncScheduler.runNow(zbKits.getInstance(), (ignored) -> {
-               zbKits.getAutoRekitUtil().toggle(player);
-               setToggleAutoRekitLore(toggleAutoRekit, player);
-               player.getOpenInventory().setItem(slot, toggleAutoRekit);
-               player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, 1.0F, 1.0F);
-            }));
-      } else {
-         Bukkit.getScheduler().runTaskAsynchronously(zbKits.getInstance(), () -> {
-            zbKits.getAutoRekitUtil().toggle(player);
-            setToggleAutoRekitLore(toggleAutoRekit, player);
-            player.getOpenInventory().setItem(slot, toggleAutoRekit);
-            player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, 1.0F, 1.0F);
-         });
-      }
-
+      // Click handlers already run on the thread that owns the player. The player data and the open
+      // inventory are not thread-safe, so this must not be moved onto an async scheduler.
+      inventory.setItem(slot, toggleAutoRekit, (p) -> {
+         zbKits.getAutoRekitUtil().toggle(player);
+         setToggleAutoRekitLore(toggleAutoRekit, player);
+         player.getOpenInventory().setItem(slot, toggleAutoRekit);
+         player.playSound(player.getLocation(), Sound.UI_LOOM_TAKE_RESULT, 1.0F, 1.0F);
+      });
    }
 
    private static void setToggleAutoRekitLore(ItemStack toggleAutoRekit, Player player) {
