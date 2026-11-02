@@ -105,7 +105,7 @@ public abstract class ZarbunexCommand<T extends JavaPlugin> extends Command impl
    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
       int indice = args.length - 1;
       if ((this.getPermission() == null || sender.hasPermission(this.getPermission())) && this.tabComplete.size() != 0 && this.tabComplete.containsKey(indice)) {
-         List<String> list = (List)((ArrayList)this.tabComplete.get(indice)).stream().filter((tabCommand) -> tabCommand.getTextAvant() == null || tabCommand.getTextAvant().contains(args[indice - 1])).filter((tabCommand) -> tabCommand.getPermission() == null || sender.hasPermission(tabCommand.getPermission())).filter((tabCommand) -> tabCommand.getText().startsWith(args[indice])).map(TabCommand::getText).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
+         List<String> list = (List)this.tabComplete.get(indice).stream().filter((tabCommand) -> tabCommand.getTextAvant() == null || tabCommand.getTextAvant().contains(args[indice - 1])).filter((tabCommand) -> tabCommand.getPermission() == null || sender.hasPermission(tabCommand.getPermission())).filter((tabCommand) -> tabCommand.getText().startsWith(args[indice])).map(TabCommand::getText).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
          return list.size() < 1 ? super.tabComplete(sender, alias, args) : list;
       } else {
          return super.tabComplete(sender, alias, args);

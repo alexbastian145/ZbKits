@@ -61,9 +61,9 @@ public class Metrics {
       boolean logErrors = config.getBoolean("logFailedRequests", false);
       boolean logSentData = config.getBoolean("logSentData", false);
       boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
-      Consumer var10007 = this::appendPlatformData;
-      Consumer var10008 = this::appendServiceData;
-      Consumer var10009 = (submitDataTask) -> Bukkit.getScheduler().runTask(plugin, submitDataTask);
+      Consumer<JsonObjectBuilder> var10007 = this::appendPlatformData;
+      Consumer<JsonObjectBuilder> var10008 = this::appendServiceData;
+      Consumer<Runnable> var10009 = (submitDataTask) -> Bukkit.getScheduler().runTask(plugin, submitDataTask);
       Objects.requireNonNull(plugin);
       this.metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, var10007, var10008, var10009, plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error), (message) -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData, logResponseStatusText);
    }
@@ -438,7 +438,7 @@ public class Metrics {
                JsonObjectBuilder valueBuilder = new JsonObjectBuilder();
                boolean allSkipped = true;
 
-               for(Map.Entry<String, Integer> valueEntry : ((Map)map.get(entryValues.getKey())).entrySet()) {
+               for(Map.Entry<String, Integer> valueEntry : map.get(entryValues.getKey()).entrySet()) {
                   valueBuilder.appendField((String)valueEntry.getKey(), (Integer)valueEntry.getValue());
                   allSkipped = false;
                }

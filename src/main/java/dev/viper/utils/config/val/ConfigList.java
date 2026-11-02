@@ -15,7 +15,7 @@ public record ConfigList(@NotNull ConfigVal val) {
    }
 
    public List<ItemStack> itemStacks() {
-      return Utils.plugin().getConfig().getList(this.val.path);
+      return (List<ItemStack>)(List<?>)Utils.plugin().getConfig().getList(this.val.path);
    }
 
    public List<ItemBuilder> itemBuilders() {
