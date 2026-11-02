@@ -2,7 +2,7 @@
 
 A modern kits plugin for Crystal PvP servers on Paper. Players save up to a configurable number of kits, load them with one command, and optionally get automatically re-kitted after a kill.
 
-- **Server:** Paper, Minecraft 1.21 - 26.x (Java 21+)
+- **Server:** Paper or Folia, Minecraft 1.21 - 26.x (Java 21+)
 - **Soft dependency:** WorldGuard (blacklisted regions)
 
 ## Features
@@ -49,7 +49,11 @@ Servers that used an older version are migrated automatically on the first start
 mvn clean package
 ```
 
-The jar is written to `target/`. Requires JDK 21.
+The jar is written to `target/`. Requires JDK 21. The plugin is compiled against the Paper 1.21.11 API and loads on 1.21 and newer.
+
+## Folia
+
+zbKits declares `folia-supported: true`. It never uses the Bukkit scheduler: delayed work for a player runs on that player's own scheduler, and a kit is only ever loaded by the thread that owns the player. On Paper the same calls run on the main thread, so behaviour is unchanged.
 
 ## Support
 

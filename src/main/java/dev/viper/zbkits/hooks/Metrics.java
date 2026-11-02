@@ -63,7 +63,8 @@ public class Metrics {
       boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
       Consumer<JsonObjectBuilder> var10007 = this::appendPlatformData;
       Consumer<JsonObjectBuilder> var10008 = this::appendServiceData;
-      Consumer<Runnable> var10009 = (submitDataTask) -> Bukkit.getScheduler().runTask(plugin, submitDataTask);
+      // The global region scheduler also works on Paper; BukkitScheduler throws on Folia.
+      Consumer<Runnable> var10009 = (submitDataTask) -> Bukkit.getGlobalRegionScheduler().run(plugin, (task) -> submitDataTask.run());
       Objects.requireNonNull(plugin);
       this.metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, var10007, var10008, var10009, plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error), (message) -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData, logResponseStatusText);
    }

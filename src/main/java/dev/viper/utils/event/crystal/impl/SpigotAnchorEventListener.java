@@ -2,10 +2,10 @@ package dev.viper.utils.event.crystal.impl;
 
 import dev.viper.utils.event.crystal.PlayerAnchorDeathEvent;
 import dev.viper.utils.library.Utils;
-import dev.viper.utils.player.PlayerUtils;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -22,7 +22,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SpigotAnchorEventListener implements Listener {
-   private static final Map<Location, UUID> DETONATOR_MAP = new HashMap();
+   /** Shared between regions on Folia, so it has to be a concurrent map. */
+   private static final Map<Location, UUID> DETONATOR_MAP = new ConcurrentHashMap<>();
 
    @EventHandler
    public void onInteract(PlayerInteractEvent event) {
@@ -90,7 +91,7 @@ public class SpigotAnchorEventListener implements Listener {
                      return;
                   }
 
-                  Player playerDetonator = PlayerUtils.player(detonator);
+                  Player playerDetonator = Bukkit.getPlayer(detonator);
                   if (playerDetonator == null) {
                      return;
                   }

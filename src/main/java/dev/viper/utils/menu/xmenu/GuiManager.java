@@ -3,7 +3,6 @@ package dev.viper.utils.menu.xmenu;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,8 +29,26 @@ public final class GuiManager {
       }
    }
 
-   public static void closeAll() {
-      Bukkit.getOnlinePlayers().stream().filter((p) -> p.getOpenInventory().getTopInventory().getHolder() instanceof GuiBuilder).forEach(HumanEntity::closeInventory);
+   /**
+    * Closes every open menu. On Folia a player may only be touched by the thread that owns them,
+    * so players owned by another region are closed through their own scheduler.
+    */
+   public static void closeAll(Plugin plugin) {
+      for(Player player : Bukkit.getOnlinePlayers()) {
+         if (Bukkit.isOwnedByCurrentRegion(player)) {
+            closeIfMenu(player);
+         } else {
+            player.getScheduler().execute(plugin, () -> closeIfMenu(player), null, 1L);
+         }
+      }
+
+   }
+
+   private static void closeIfMenu(Player player) {
+      if (player.getOpenInventory().getTopInventory().getHolder() instanceof GuiBuilder) {
+         player.closeInventory();
+      }
+
    }
 
    public static final class InventoryListener implements Listener {
@@ -69,7 +86,9 @@ public final class GuiManager {
          if (e.getInventory().getHolder() instanceof GuiBuilder) {
             GuiBuilder inv = (GuiBuilder)e.getInventory().getHolder();
             if (inv.handleClose(e)) {
-               Bukkit.getScheduler().runTask(this.plugin, () -> inv.open((Player)e.getPlayer()));
+               // Re-open on the next tick, on the scheduler of the player who owns the menu.
+               Player viewer = (Player)e.getPlayer();
+               viewer.getScheduler().run(this.plugin, (task) -> inv.open(viewer), null);
             }
          }
 
@@ -78,7 +97,7 @@ public final class GuiManager {
       @EventHandler
       public void onPluginDisable(PluginDisableEvent e) {
          if (e.getPlugin() == this.plugin) {
-            GuiManager.closeAll();
+            GuiManager.closeAll(this.plugin);
             GuiManager.REGISTERED.set(false);
          }
 

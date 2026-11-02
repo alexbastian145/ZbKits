@@ -5,6 +5,7 @@ import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.menus.admin.KitViewMenu;
 import dev.viper.utils.command.ZarbunexCommand;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -50,8 +51,20 @@ public class KitsAdminCommand extends ZarbunexCommand<zbKits> {
                   }
 
                   String kitName = (String)Stream.of(args).skip(2L).collect(Collectors.joining(" "));
-                  zbKits.getKitUtil().delete(targetPlayer.getUniqueId(), kitName);
-                  zbKits.getEnderChestUtil().delete(targetPlayer.getUniqueId(), kitName);
+                  UUID targetId = targetPlayer.getUniqueId();
+                  Runnable clear = () -> {
+                     zbKits.getKitUtil().delete(targetId, kitName);
+                     zbKits.getEnderChestUtil().delete(targetId, kitName);
+                  };
+                  // An online player's data belongs to the thread that owns them. On Folia that is not
+                  // necessarily the admin's thread, so hand the change over to the target's scheduler.
+                  Player online = targetPlayer.getPlayer();
+                  if (online != null && !Bukkit.isOwnedByCurrentRegion(online)) {
+                     online.getScheduler().run(zbKits.getInstance(), (task) -> clear.run(), clear);
+                  } else {
+                     clear.run();
+                  }
+
                   Messages.send(executor, "kitsadmin_cleared", "%kit%", kitName, "%player%", targetPlayer.getName());
             }
 

@@ -6,9 +6,9 @@ import dev.viper.zbkits.utils.config.MenuConfig;
 import dev.viper.utils.menu.xmenu.GuiBuilder;
 import dev.viper.utils.menu.xmenu.ItemBuilderGUI;
 import dev.viper.utils.text.color.ColorizeText;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,7 +19,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class KitRoomMenu extends GuiBuilder {
    private static final MenuConfig CONFIG = new MenuConfig(zbKits.getInstance(), "menus/kitroom_menu.yml");
-   private static final Map<Player, String> currentCategoryMap = new HashMap();
+   // Shared between region threads on Folia, so it has to be a concurrent map.
+   private static final Map<Player, String> currentCategoryMap = new ConcurrentHashMap<>();
 
    public KitRoomMenu() {
       super(54);
@@ -95,7 +96,11 @@ public class KitRoomMenu extends GuiBuilder {
    }
 
    public static void setCurrentCategory(Player player, String category) {
-      currentCategoryMap.put(player, category);
+      if (category == null) {
+         currentCategoryMap.remove(player);
+      } else {
+         currentCategoryMap.put(player, category);
+      }
    }
 
    public static String getCurrentCategory(Player player) {

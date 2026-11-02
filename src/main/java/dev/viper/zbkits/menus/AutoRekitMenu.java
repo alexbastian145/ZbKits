@@ -2,6 +2,7 @@ package dev.viper.zbkits.menus;
 
 import dev.viper.utils.compat.Compat;
 import dev.viper.zbkits.zbKits;
+import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.utils.config.MenuConfig;
 import dev.viper.utils.menu.xmenu.GuiBuilder;
 import dev.viper.utils.menu.xmenu.ItemBuilderGUI;
@@ -89,11 +90,7 @@ public class AutoRekitMenu extends GuiBuilder {
          int kitNumber = i + 1;
          ItemStack item = createItem("auto_rekit.kits", Material.END_CRYSTAL, kitNumber);
          inventory.setItem(slot, item, (p) -> {
-            String kitSelected = PLUGIN.getConfig().getString("messages.auto_rekit_kit_selected");
-
-            assert kitSelected != null;
-
-            player.sendMessage(ColorizeText.hex(kitSelected).replace("%kit%", String.valueOf(kitNumber)));
+            Messages.send(player, "auto_rekit_kit_selected", "%kit%", String.valueOf(kitNumber));
             zbKits.getAutoRekitUtil().setKit(player, "Kit " + kitNumber);
          });
       }

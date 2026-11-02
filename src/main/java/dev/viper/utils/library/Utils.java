@@ -4,7 +4,6 @@ import dev.viper.utils.commodore.Commodore;
 import dev.viper.utils.commodore.CommodoreProvider;
 import dev.viper.utils.event.crystal.impl.SpigotAnchorEventListener;
 import dev.viper.utils.event.crystal.impl.SpigotCrystalEventListener;
-import dev.viper.utils.menu.listener.MenuListener;
 import dev.viper.utils.misc.Versions;
 import dev.viper.utils.registration.Registrar;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +28,6 @@ public class Utils {
       }
 
       Registrar.events(new SpigotCrystalEventListener());
-      Registrar.events(new MenuListener());
    }
 
    public static @NotNull Utils init(@NotNull JavaPlugin plugin, boolean p, String pluginName) {

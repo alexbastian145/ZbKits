@@ -18,6 +18,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class PremadeKitUtil implements PremadeKitAPI {
    private static final String FILE = "data/premadekit.yml";
+   /** Guards the shared premade kit file; on Folia every player's region thread can reach it. */
+   private static final Object LOCK = new Object();
    private static ConfigManager configManager;
    private final Logger logger = Logger.getLogger(PremadeKitUtil.class.getName());
 
@@ -35,11 +37,15 @@ public class PremadeKitUtil implements PremadeKitAPI {
          PlayerInventory inventory = player.getInventory();
          List<ItemStack> inventoryList = Arrays.asList(inventory.getContents());
          List<ItemStack> armorList = Arrays.asList(inventory.getArmorContents());
-         ConfigurationSection premadeKitSection = configManager.getConfig(FILE).createSection("premadekit");
-         premadeKitSection.set("inventory", inventoryList);
-         premadeKitSection.set("armor", armorList);
-         premadeKitSection.set("offhand", inventory.getItemInOffHand());
-         configManager.saveConfig(FILE);
+         ItemStack offhand = inventory.getItemInOffHand();
+         synchronized(LOCK) {
+            ConfigurationSection premadeKitSection = configManager.getConfig(FILE).createSection("premadekit");
+            premadeKitSection.set("inventory", inventoryList);
+            premadeKitSection.set("armor", armorList);
+            premadeKitSection.set("offhand", offhand);
+            configManager.saveConfig(FILE);
+         }
+
          Messages.send(player, "premade_kit_saved");
       } catch (Exception e) {
          this.logger.log(Level.SEVERE, "Failed to save premade kits file", e);
@@ -48,12 +54,17 @@ public class PremadeKitUtil implements PremadeKitAPI {
    }
 
    public void set(GuiBuilder inventory) {
-      ConfigurationSection section = configManager.getConfig(FILE).getConfigurationSection("premadekit");
-      if (section != null) {
-         List<ItemStack> inventoryItems = readItems(section, "inventory");
-         List<ItemStack> armorItems = readItems(section, "armor");
-         ItemStack offhandItem = section.getItemStack("offhand");
+      List<ItemStack> inventoryItems;
+      List<ItemStack> armorItems;
+      ItemStack offhandItem;
+      synchronized(LOCK) {
+         ConfigurationSection section = configManager.getConfig(FILE).getConfigurationSection("premadekit");
+         inventoryItems = section == null ? null : readItems(section, "inventory");
+         armorItems = section == null ? null : readItems(section, "armor");
+         offhandItem = section == null ? null : section.getItemStack("offhand");
+      }
 
+      if (inventoryItems != null) {
          for(int i = 0; i < inventoryItems.size() && i < 41; ++i) {
             ItemStack item = inventoryItems.get(i);
             if (item != null) {
@@ -76,10 +87,16 @@ public class PremadeKitUtil implements PremadeKitAPI {
    }
 
    public void load(Player player) {
-      ConfigurationSection section = configManager.getConfig(FILE).getConfigurationSection("premadekit");
-      List<ItemStack> inventoryItems = section == null ? new ArrayList<>() : readItems(section, "inventory");
-      List<ItemStack> armorItems = section == null ? new ArrayList<>() : readItems(section, "armor");
-      ItemStack offhandItem = section == null ? null : section.getItemStack("offhand");
+      List<ItemStack> inventoryItems;
+      List<ItemStack> armorItems;
+      ItemStack offhandItem;
+      synchronized(LOCK) {
+         ConfigurationSection section = configManager.getConfig(FILE).getConfigurationSection("premadekit");
+         inventoryItems = section == null ? new ArrayList<>() : readItems(section, "inventory");
+         armorItems = section == null ? new ArrayList<>() : readItems(section, "armor");
+         offhandItem = section == null ? null : section.getItemStack("offhand");
+      }
+
       boolean empty = inventoryItems.stream().allMatch((item) -> item == null) && armorItems.stream().allMatch((item) -> item == null) && offhandItem == null;
       if (empty) {
          Messages.send(player, "premade_kit_empty");
@@ -117,7 +134,9 @@ public class PremadeKitUtil implements PremadeKitAPI {
 
    public void saveAll() {
       try {
-         configManager.saveConfig(FILE);
+         synchronized(LOCK) {
+            configManager.saveConfig(FILE);
+         }
       } catch (Exception e) {
          this.logger.log(Level.SEVERE, "Failed to save premadekits file", e);
       }

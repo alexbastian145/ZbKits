@@ -11,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class KitRoomUtil implements KitRoomAPI {
+   // The methods below are synchronized: the kit room file is shared, and on Folia every player's
+   // region thread can reach it.
    private static ConfigManager configManager;
    private final Logger logger = Logger.getLogger(KitRoomUtil.class.getName());
 
@@ -23,7 +25,7 @@ public class KitRoomUtil implements KitRoomAPI {
       configManager.create("data/kitroom.yml");
    }
 
-   public void save(Player player, String category) {
+   public synchronized void save(Player player, String category) {
       if (this.exists(category)) {
          this.delete(category);
       }
@@ -44,7 +46,7 @@ public class KitRoomUtil implements KitRoomAPI {
 
    }
 
-   public void load(GuiBuilder inventory, String category) {
+   public synchronized void load(GuiBuilder inventory, String category) {
       for(int i = 0; i < 45; ++i) {
          inventory.setItem(i, new ItemStack(Material.AIR));
          ItemStack item = configManager.getConfig("data/kitroom.yml").getItemStack("categories." + category + "." + i);
@@ -55,7 +57,7 @@ public class KitRoomUtil implements KitRoomAPI {
 
    }
 
-   public void delete(String category) {
+   public synchronized void delete(String category) {
       if (this.exists(category)) {
          configManager.set("data/kitroom.yml", "categories." + category, (Object)null);
       }
@@ -68,7 +70,7 @@ public class KitRoomUtil implements KitRoomAPI {
 
    }
 
-   public boolean exists(String category) {
+   public synchronized boolean exists(String category) {
       return configManager.contains("data/kitroom.yml", "categories." + category + ".");
    }
 }

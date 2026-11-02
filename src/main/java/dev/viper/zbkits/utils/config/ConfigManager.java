@@ -7,8 +7,8 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -16,13 +16,13 @@ import org.bukkit.plugin.Plugin;
 public class ConfigManager {
    private static ConfigManager instance;
    private final Plugin plugin;
-   private final Map<String, FileConfiguration> configurations = new HashMap();
+   private final Map<String, FileConfiguration> configurations = new ConcurrentHashMap<>();
 
    private ConfigManager(Plugin plugin) {
       this.plugin = plugin;
    }
 
-   public static ConfigManager get(Plugin plugin) {
+   public static synchronized ConfigManager get(Plugin plugin) {
       if (instance == null) {
          instance = new ConfigManager(plugin);
       }
@@ -30,7 +30,7 @@ public class ConfigManager {
       return instance;
    }
 
-   public FileConfiguration getConfig(String filePath) {
+   public synchronized FileConfiguration getConfig(String filePath) {
       if (!this.configurations.containsKey(filePath)) {
          this.create(filePath);
       }
@@ -59,12 +59,12 @@ public class ConfigManager {
 
    }
 
-   public void reloadConfig(String filePath) {
+   public synchronized void reloadConfig(String filePath) {
       File configFile = new File(this.plugin.getDataFolder(), filePath);
       this.configurations.put(filePath, YamlConfiguration.loadConfiguration(configFile));
    }
 
-   public void create(String filePath) {
+   public synchronized void create(String filePath) {
       File configFile = new File(this.plugin.getDataFolder(), filePath);
       if (!configFile.exists()) {
          this.plugin.saveResource(filePath, false);

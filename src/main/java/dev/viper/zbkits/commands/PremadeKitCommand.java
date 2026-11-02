@@ -2,10 +2,9 @@ package dev.viper.zbkits.commands;
 
 import dev.viper.zbkits.zbKits;
 import dev.viper.zbkits.hooks.worldguard.WorldGuardHook;
+import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.utils.wg.BlacklistedRegion;
 import dev.viper.utils.command.ZarbunexCommand;
-import dev.viper.utils.text.color.ColorizeText;
-import java.util.Objects;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,8 +21,7 @@ public class PremadeKitCommand extends ZarbunexCommand<zbKits> {
    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
       if (sender instanceof Player player) {
          if (WorldGuardHook.get().isEnabled() && BlacklistedRegion.isInBlacklistedRegion(player)) {
-            String cannotUseHere = (String)Objects.requireNonNull(zbKits.getInstance().getConfig().getString("messages.blacklisted_region"));
-            player.sendMessage(ColorizeText.hex(cannotUseHere));
+            Messages.send(player, "blacklisted_region");
             return true;
          } else if (args.length == 0) {
             zbKits.getPremadeKitUtil().load(player);
@@ -32,8 +30,7 @@ public class PremadeKitCommand extends ZarbunexCommand<zbKits> {
             if (player.hasPermission("zbkits.admin")) {
                zbKits.getPremadeKitUtil().save(player);
             } else {
-               String noPerm = (String)Objects.requireNonNull(zbKits.getInstance().getConfig().getString("messages.no_permission"));
-               player.sendMessage(ColorizeText.hex(noPerm));
+               Messages.send(player, "no_permission");
             }
 
             return true;

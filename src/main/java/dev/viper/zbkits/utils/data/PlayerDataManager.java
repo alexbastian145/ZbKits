@@ -28,8 +28,9 @@ import org.bukkit.plugin.Plugin;
  * <ul>
  *   <li>Online players are cached in memory, so nothing is read from disk while they play.</li>
  *   <li>A save only rewrites the file of the player that changed.</li>
- *   <li>Thread safety: the YAML objects are only touched on the main thread. A save takes a text
- *       snapshot on the main thread and only that immutable String is written on the IO thread.</li>
+ *   <li>Thread safety: a player's YAML object is only touched by the thread that owns that player
+ *       (the main thread on Paper, the player's region thread on Folia). A save takes a text
+ *       snapshot on that thread and only that immutable String is written on the IO thread.</li>
  *   <li>Files are written to a temp file and moved into place, so a crash can't leave half a file.</li>
  * </ul>
  */
@@ -59,7 +60,7 @@ public class PlayerDataManager {
    /**
     * Returns the data of a player. Online players are cached; for offline players a fresh copy is
     * loaded, which is only meant for short admin lookups. Call {@link #save} after changing it.
-    * Must be called from the main thread.
+    * Must be called from the thread that owns the player, never from the IO thread or an async task.
     */
    public YamlConfiguration get(UUID id) {
       YamlConfiguration cached = this.cache.get(id);
@@ -76,7 +77,7 @@ public class PlayerDataManager {
       }
    }
 
-   /** Queues a write of this player's data. Must be called from the main thread. */
+   /** Queues a write of this player's data. Must be called from the thread that owns the player. */
    public void save(UUID id, YamlConfiguration config) {
       String snapshot = config.saveToString();
       if (this.pending.put(id, snapshot) == null) {

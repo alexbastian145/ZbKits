@@ -1,13 +1,5 @@
 package dev.viper.utils.library.wrapper;
 
-import dev.viper.utils.library.event.PluginEvents;
-import dev.viper.utils.resource.ResourceFile;
-import dev.viper.utils.resource.ResourceOptions;
-import dev.viper.utils.resource.format.ResourceFormat;
-import dev.viper.utils.resource.format.ResourceFormats;
-import dev.viper.utils.resource.path.ResourcePath;
-import dev.viper.utils.resource.path.ResourcePaths;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import org.bukkit.Server;
 import org.bukkit.event.Listener;
@@ -63,24 +55,6 @@ public abstract class PluginWrapper extends JavaPlugin implements Listener {
       this.getLogger().log(level, text);
    }
 
-   public final @NotNull ResourceFile resource(String name, ResourceFormat format, ResourcePath path, Consumer<ResourceOptions> options) {
-      return ResourceFile.builder().name(name).format(format).path(path).options(options).build();
-   }
-
-   public final @NotNull ResourceFile resource(String name, ResourcePath path, Consumer<ResourceOptions> options) {
-      return this.resource(name, ResourceFormats.yaml(), path, options);
-   }
-
-   public final @NotNull ResourceFile resource(String name, ResourcePath path) {
-      return this.resource(name, ResourceFormats.yaml(), path, (options) -> {
-      });
-   }
-
-   public final @NotNull ResourceFile resource(String name) {
-      return this.resource(name, ResourceFormats.yaml(), ResourcePaths.plugin(), (options) -> {
-      });
-   }
-
    public final @NotNull Server server() {
       return this.getServer();
    }
@@ -91,9 +65,5 @@ public abstract class PluginWrapper extends JavaPlugin implements Listener {
 
    public final @NotNull PluginManager plugins() {
       return this.server().getPluginManager();
-   }
-
-   public final @NotNull PluginEvents events() {
-      return new PluginEvents();
    }
 }

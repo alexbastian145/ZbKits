@@ -14,7 +14,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.structure.StructureManager;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +29,6 @@ public class Servers {
 
    public static @NotNull ScoreboardManager scoreboards() {
       return Utils.plugin().getServer().getScoreboardManager();
-   }
-
-   public static @NotNull BukkitScheduler scheduler() {
-      return Utils.plugin().getServer().getScheduler();
    }
 
    public static @NotNull ServicesManager services() {
