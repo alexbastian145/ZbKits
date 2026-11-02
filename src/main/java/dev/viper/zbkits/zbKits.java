@@ -84,7 +84,7 @@ public final class zbKits extends PluginWrapper {
       new Metrics(this, 22161);
       HooksImpl.of(this);
       log.sendMessage(ColorizeText.hex("&c&lzbKits &7› &fThe &#ff2e2eplugin &fhas been successfully enabled, created by &#ff2e2ezarbunex &fwith &#ff2e2e❤"));
-      log.sendMessage(ColorizeText.hex("&c&lzbKits &7› &fJoin our &#ff2e2esupport server &fat &#ff2e2ehttps://xyris.fun/devs/"));
+      log.sendMessage(ColorizeText.hex("&c&lzbKits &7› &fJoin our &#ff2e2esupport server &fat &#ff2e2ehttps://discord.gg/QRj5EaWyC"));
    }
 
    protected void stop() {

@@ -57,4 +57,6 @@ zbKits declares `folia-supported: true`. It never uses the Bukkit scheduler: del
 
 ## Support
 
-https://discord.gg/dvRN4FabDq
+Join the zarbunex Discord: https://discord.gg/QRj5EaWyC
+
+Made by zarbunex.
