@@ -30,17 +30,8 @@ public class Utils {
       Registrar.events(new SpigotCrystalEventListener());
    }
 
-   public static @NotNull Utils init(@NotNull JavaPlugin plugin, boolean p, String pluginName) {
-      // License validation is disabled to avoid external service dependency.
+   public static @NotNull Utils init(@NotNull JavaPlugin plugin) {
       return new Utils(plugin);
-   }
-
-   public static @NotNull Utils init(@NotNull JavaPlugin plugin, String hi, String why) {
-      return new Utils(plugin);
-   }
-
-   public static void uninit() {
-      // No license manager cleanup required.
    }
 
    public static @NotNull JavaPlugin plugin() {

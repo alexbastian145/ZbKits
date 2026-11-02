@@ -3,8 +3,6 @@ package dev.viper.utils.server;
 import dev.viper.utils.library.Utils;
 import dev.viper.utils.library.wrapper.PluginWrapper;
 import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Server;
@@ -37,14 +35,6 @@ public class Servers {
 
    public static @NotNull List<Player> online() {
       return new ArrayList(Utils.plugin().getServer().getOnlinePlayers());
-   }
-
-   public static void init(JavaPlugin plugin, String config, boolean p, String pluginName) {
-      // License validation is disabled; nothing else to initialize here.
-   }
-
-   public static void uninit() {
-      // No license cleanup required.
    }
 
    public static @NotNull List<String> onlineNames() {
