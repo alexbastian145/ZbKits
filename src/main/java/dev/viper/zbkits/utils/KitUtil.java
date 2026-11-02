@@ -1,112 +1,83 @@
 package dev.viper.zbkits.utils;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import dev.viper.zbkits.zbKits;
+import dev.viper.utils.menu.xmenu.GuiBuilder;
+import dev.viper.utils.text.color.ColorizeText;
 import dev.viper.zbkits.api.KitsAPI;
 import dev.viper.zbkits.api.events.KitLoadEvent;
 import dev.viper.zbkits.api.events.KitSaveEvent;
-import dev.viper.zbkits.utils.config.ConfigManager;
-import dev.viper.utils.menu.xmenu.GuiBuilder;
-import dev.viper.utils.text.color.ColorizeText;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import dev.viper.zbkits.utils.data.PlayerDataManager;
+import dev.viper.zbkits.zbKits;
+import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * Kit storage. Kits live in the player's own data file (see {@link PlayerDataManager}) under
+ * "&lt;kit name&gt;.inventory.*", ".armor.*" and ".offhand". The ender chest saved for the same
+ * kit sits next to it under ".enderchest" and is handled by {@link EnderChestUtil}.
+ */
 public class KitUtil implements KitsAPI {
-   private static ConfigManager configManager;
-   private final Logger logger = Logger.getLogger(KitUtil.class.getName());
+   private final PlayerDataManager data;
 
-   public KitUtil(ConfigManager configManager) {
-      KitUtil.configManager = configManager;
+   public KitUtil(PlayerDataManager data) {
+      this.data = data;
    }
 
-   public static void of(JavaPlugin plugin) {
-      configManager = ConfigManager.get(plugin);
-      configManager.create("data/kits.yml");
-   }
-
-   public void save(final Player player, final String kitName) {
-      final String playerName = player.getUniqueId().toString();
-      final ItemStack[] inventoryContents = new ItemStack[36];
+   public void save(Player player, String kitName) {
+      Inventory top = player.getOpenInventory().getTopInventory();
+      ItemStack[] inventoryContents = new ItemStack[36];
 
       for(int i = 0; i < 36; ++i) {
-         inventoryContents[i] = player.getOpenInventory().getTopInventory().getItem(i);
+         inventoryContents[i] = top.getItem(i);
       }
 
-      final ItemStack[] armorContents = new ItemStack[4];
+      ItemStack[] armorContents = new ItemStack[4];
 
       for(int i = 36; i < 40; ++i) {
-         armorContents[i - 36] = player.getOpenInventory().getTopInventory().getItem(i);
+         armorContents[i - 36] = top.getItem(i);
       }
 
-      final ItemStack offhandItem = player.getOpenInventory().getTopInventory().getItem(40);
+      ItemStack offhandItem = top.getItem(40);
       KitSaveEvent event = new KitSaveEvent(player, kitName, inventoryContents, armorContents, offhandItem);
       Bukkit.getServer().getPluginManager().callEvent(event);
       if (!event.isCancelled()) {
-         (new BukkitRunnable() {
-            public void run() {
-               if (KitUtil.this.exists(player, kitName)) {
-                  KitUtil.this.delete(player, kitName);
-               }
+         UUID id = player.getUniqueId();
+         YamlConfiguration config = this.data.get(id);
+         this.clearKit(config, kitName);
 
-               Map<String, Object> kitData = new HashMap();
+         for(int i = 0; i < 36; ++i) {
+            config.set(kitName + ".inventory." + i, inventoryContents[i]);
+         }
 
-               for(int i = 0; i < 36; ++i) {
-                  kitData.put(playerName + "." + kitName + ".inventory." + i, inventoryContents[i]);
-               }
+         for(int i = 0; i < 4; ++i) {
+            config.set(kitName + ".armor." + i, armorContents[i]);
+         }
 
-               for(int i = 0; i < 4; ++i) {
-                  kitData.put(playerName + "." + kitName + ".armor." + i, armorContents[i]);
-               }
-
-               kitData.put(playerName + "." + kitName + ".offhand", offhandItem);
-
-               for(Map.Entry<String, Object> entry : kitData.entrySet()) {
-                  KitUtil.configManager.set("data/kits.yml", (String)entry.getKey(), entry.getValue());
-               }
-
-               try {
-                  KitUtil.configManager.saveConfig("data/kits.yml");
-                  (new BukkitRunnable() {
-                     public void run() {
-                        String kitSaved = ((String)Objects.requireNonNull(zbKits.getInstance().getConfig().getString("messages.kit_saved"))).replace("%kit%", kitName);
-                        player.sendMessage(ColorizeText.hex(kitSaved));
-                     }
-                  }).runTask(zbKits.getInstance());
-               } catch (Exception e) {
-                  KitUtil.this.logger.log(Level.SEVERE, "Failed to save kit: " + kitName, e);
-               }
-
-            }
-         }).runTaskAsynchronously(zbKits.getInstance());
+         config.set(kitName + ".offhand", offhandItem);
+         this.data.save(id, config);
+         Messages.send(player, "kit_saved", "%kit%", kitName);
       }
+
    }
 
    public void load(Player player, String kitName) {
-      String playerName = player.getUniqueId().toString();
       KitLoadEvent event = new KitLoadEvent(player, kitName);
       Bukkit.getServer().getPluginManager().callEvent(event);
       if (!event.isCancelled()) {
-         if (configManager.contains("data/kits.yml", playerName + "." + kitName)) {
+         YamlConfiguration config = this.data.get(player.getUniqueId());
+         if (hasKit(config, kitName)) {
             for(int i = 0; i < 36; ++i) {
-               ItemStack item = configManager.getConfig("data/kits.yml").getItemStack(playerName + "." + kitName + ".inventory." + i);
-               player.getInventory().setItem(i, item);
+               player.getInventory().setItem(i, config.getItemStack(kitName + ".inventory." + i));
             }
 
             for(int i = 0; i < 4; ++i) {
-               ItemStack item = configManager.getConfig("data/kits.yml").getItemStack(playerName + "." + kitName + ".armor." + i);
-               player.getInventory().setItem(36 + i, item);
+               player.getInventory().setItem(36 + i, config.getItemStack(kitName + ".armor." + i));
             }
 
-            ItemStack offhandItem = configManager.getConfig("data/kits.yml").getItemStack(playerName + "." + kitName + ".offhand");
-            player.getInventory().setItemInOffHand(offhandItem);
+            player.getInventory().setItemInOffHand(config.getItemStack(kitName + ".offhand"));
             if (zbKits.getInstance().getConfig().getBoolean("broadcast.kit_load", true)) {
                String bcastLoaded = zbKits.getInstance().getConfig().getString("broadcast.kit_load_message");
                if (bcastLoaded != null) {
@@ -115,12 +86,7 @@ public class KitUtil implements KitsAPI {
                }
             }
 
-            String kitLoaded = zbKits.getInstance().getConfig().getString("messages.kit_loaded");
-            if (kitLoaded != null) {
-               kitLoaded = kitLoaded.replace("%kit%", kitName);
-               player.sendMessage(ColorizeText.hex(kitLoaded));
-            }
-
+            Messages.send(player, "kit_loaded", "%kit%", kitName);
             zbKits.getEnderChestUtil().load(player, kitName);
          } else {
             Messages.send(player, "kit_empty", "%kit%", kitName);
@@ -130,20 +96,22 @@ public class KitUtil implements KitsAPI {
    }
 
    public void set(Player player, String kitName, GuiBuilder inventory) {
-      String playerName = player.getUniqueId().toString();
-      if (configManager.contains("data/kits.yml", playerName + "." + kitName)) {
+      this.set(player.getUniqueId(), kitName, inventory);
+   }
+
+   /** Fills a GUI with a kit of any player, online or not. */
+   public void set(UUID playerId, String kitName, GuiBuilder inventory) {
+      YamlConfiguration config = this.data.get(playerId);
+      if (hasKit(config, kitName)) {
          for(int i = 0; i < 36; ++i) {
-            ItemStack item = configManager.getConfig("data/kits.yml").getItemStack(playerName + "." + kitName + ".inventory." + i);
-            inventory.setItem(i, item);
+            inventory.setItem(i, config.getItemStack(kitName + ".inventory." + i));
          }
 
          for(int i = 0; i < 4; ++i) {
-            ItemStack item = configManager.getConfig("data/kits.yml").getItemStack(playerName + "." + kitName + ".armor." + i);
-            inventory.setItem(36 + i, item);
+            inventory.setItem(36 + i, config.getItemStack(kitName + ".armor." + i));
          }
 
-         ItemStack offhandItem = configManager.getConfig("data/kits.yml").getItemStack(playerName + "." + kitName + ".offhand");
-         inventory.setItem(40, offhandItem);
+         inventory.setItem(40, config.getItemStack(kitName + ".offhand"));
       }
 
    }
@@ -163,29 +131,50 @@ public class KitUtil implements KitsAPI {
    }
 
    public void delete(Player player, String kitName) {
-      String playerName = player.getUniqueId().toString();
-      configManager.set("data/kits.yml", playerName + "." + kitName, (Object)null);
+      this.delete(player.getUniqueId(), kitName);
+   }
 
-      try {
-         configManager.saveConfig("data/kits.yml");
-      } catch (Exception e) {
-         this.logger.log(Level.SEVERE, "Failed to delete kit: " + kitName, e);
-      }
-
+   /** Deletes a kit of any player, online or not. The ender chest saved for the kit is not touched. */
+   public void delete(UUID playerId, String kitName) {
+      YamlConfiguration config = this.data.get(playerId);
+      this.clearKit(config, kitName);
+      this.data.save(playerId, config);
    }
 
    public boolean exists(Player player, String kitName) {
-      String playerName = player.getUniqueId().toString();
-      return configManager.contains("data/kits.yml", playerName + "." + kitName);
+      return this.exists(player.getUniqueId(), kitName);
    }
 
-   @CanIgnoreReturnValue
-   public void saveAll() {
-      try {
-         configManager.saveConfig("data/kits.yml");
-      } catch (Exception e) {
-         this.logger.log(Level.SEVERE, "Failed to save kits file", e);
+   public boolean exists(UUID playerId, String kitName) {
+      return hasKit(this.data.get(playerId), kitName);
+   }
+
+   /**
+    * Kits are named "Kit 1", "Kit 2", ... and use the permission zbkits.kit1, zbkits.kit2, ...
+    * Names that don't follow that pattern aren't restricted.
+    */
+   public boolean canUse(Player player, String kitName) {
+      if (kitName != null && kitName.startsWith("Kit ")) {
+         String number = kitName.substring(4).trim();
+         if (!number.isEmpty() && number.chars().allMatch(Character::isDigit)) {
+            return player.hasPermission("zbkits.kit" + number);
+         }
       }
 
+      return true;
+   }
+
+   public void saveAll() {
+      this.data.flushPending();
+   }
+
+   private void clearKit(YamlConfiguration config, String kitName) {
+      config.set(kitName + ".inventory", null);
+      config.set(kitName + ".armor", null);
+      config.set(kitName + ".offhand", null);
+   }
+
+   private static boolean hasKit(YamlConfiguration config, String kitName) {
+      return config.contains(kitName + ".inventory") || config.contains(kitName + ".armor") || config.contains(kitName + ".offhand");
    }
 }

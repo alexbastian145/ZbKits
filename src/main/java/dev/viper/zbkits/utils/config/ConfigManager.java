@@ -2,6 +2,11 @@ package dev.viper.zbkits.utils.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,8 +43,17 @@ public class ConfigManager {
       FileConfiguration config = this.getConfig(filePath);
 
       try {
-         config.save(configFile);
-      } catch (IOException var5) {
+         // Write to a temp file first and move it into place, so a crash can't leave a half-written file.
+         Path target = configFile.toPath();
+         Path temp = target.resolveSibling(target.getFileName() + ".tmp");
+         Files.writeString(temp, config.saveToString(), StandardCharsets.UTF_8);
+
+         try {
+            Files.move(temp, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+         } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING);
+         }
+      } catch (IOException e) {
          this.plugin.getLogger().warning("Could not save config file: " + filePath);
       }
 

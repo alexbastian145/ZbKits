@@ -2,6 +2,7 @@ package dev.viper.zbkits.menus;
 
 import dev.viper.utils.compat.Compat;
 import dev.viper.zbkits.zbKits;
+import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.utils.config.MenuConfig;
 import dev.viper.utils.menu.xmenu.GuiBuilder;
 import dev.viper.utils.menu.xmenu.ItemBuilderGUI;
@@ -110,7 +111,12 @@ public class KitsMenu extends GuiBuilder {
                   EnderChestEditor.openEnderChestEditor(player, "Kit " + kitNumber);
                }
             } else if (e.isLeftClick()) {
-               zbKits.getKitUtil().load(player, "Kit " + kitNumber);
+               String kitName = "Kit " + kitNumber;
+               if (zbKits.getKitUtil().canUse(player, kitName)) {
+                  zbKits.getKitUtil().load(player, kitName);
+               } else {
+                  Messages.send(player, "kit_no_permission", "%kit%", kitName);
+               }
             }
 
          });

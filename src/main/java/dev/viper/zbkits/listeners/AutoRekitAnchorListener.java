@@ -15,11 +15,9 @@ public class AutoRekitAnchorListener implements Listener {
    @EventHandler
    public void onAnchorDeath(PlayerAnchorDeathEvent e) {
       Schedulers.sync().execute((Consumer)((task) -> {
-         Player killer = e.attacker().getPlayer();
-
-         assert killer != null;
-
-         if (zbKits.getAutoRekitUtil().isEnabled(killer)) {
+         // The killer can have left during the 5 tick delay, so never assume they are still online.
+         Player killer = e.attacker();
+         if (killer != null && killer.isOnline() && zbKits.getAutoRekitUtil().isEnabled(killer)) {
             AutoRekitListener.load(killer);
          }
 

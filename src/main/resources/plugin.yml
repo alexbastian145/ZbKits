@@ -10,8 +10,17 @@ authors:
 softdepend:
   - WorldGuard
 
+# The per-kit permissions zbkits.kit1 ... zbkits.kitN (N = "kits" in config.yml) are registered
+# when the plugin starts and default to true.
 permissions:
   zbkits.admin:
+    description: Admin commands (/kitsadmin, /kitroomadmin, /premadekit save, /zbkits reload)
+    default: op
+  zbkits.autorekit:
+    description: Use /autorekit
     default: op
   zbkits.autokit:
+    description: Old name of zbkits.autorekit, grants it
     default: op
+    children:
+      zbkits.autorekit: true

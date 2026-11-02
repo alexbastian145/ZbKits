@@ -1,23 +1,23 @@
 package dev.viper.zbkits.utils;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import dev.viper.zbkits.zbKits;
-import dev.viper.zbkits.api.PremadeKitAPI;
-import dev.viper.zbkits.utils.config.ConfigManager;
 import dev.viper.utils.menu.xmenu.GuiBuilder;
 import dev.viper.utils.text.color.ColorizeText;
+import dev.viper.zbkits.api.PremadeKitAPI;
+import dev.viper.zbkits.utils.config.ConfigManager;
+import dev.viper.zbkits.zbKits;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 public class PremadeKitUtil implements PremadeKitAPI {
+   private static final String FILE = "data/premadekit.yml";
    private static ConfigManager configManager;
    private final Logger logger = Logger.getLogger(PremadeKitUtil.class.getName());
 
@@ -27,23 +27,20 @@ public class PremadeKitUtil implements PremadeKitAPI {
 
    public static void of(zbKits plugin) {
       configManager = ConfigManager.get(plugin);
-      configManager.create("data/premadekit.yml");
+      configManager.create(FILE);
    }
 
    public void save(Player player) {
       try {
-         Inventory inventory = player.getInventory();
+         PlayerInventory inventory = player.getInventory();
          List<ItemStack> inventoryList = Arrays.asList(inventory.getContents());
-         List<ItemStack> armorList = Arrays.asList(player.getInventory().getArmorContents());
-         ConfigurationSection premadeKitSection = configManager.getConfig("data/premadekit.yml").createSection("premadekit");
+         List<ItemStack> armorList = Arrays.asList(inventory.getArmorContents());
+         ConfigurationSection premadeKitSection = configManager.getConfig(FILE).createSection("premadekit");
          premadeKitSection.set("inventory", inventoryList);
          premadeKitSection.set("armor", armorList);
-         premadeKitSection.set("offhand", player.getInventory().getItemInOffHand());
-         configManager.saveConfig("data/premadekit.yml");
-         String saved = zbKits.getInstance().getConfig().getString("messages.premade_kit_saved");
-         if (saved != null) {
-            player.sendMessage(ColorizeText.hex(saved));
-         }
+         premadeKitSection.set("offhand", inventory.getItemInOffHand());
+         configManager.saveConfig(FILE);
+         Messages.send(player, "premade_kit_saved");
       } catch (Exception e) {
          this.logger.log(Level.SEVERE, "Failed to save premade kits file", e);
       }
@@ -51,21 +48,21 @@ public class PremadeKitUtil implements PremadeKitAPI {
    }
 
    public void set(GuiBuilder inventory) {
-      ConfigurationSection premadeKitSection = configManager.getConfig("data/premadekit.yml").getConfigurationSection("premadekit");
-      if (premadeKitSection != null) {
-         List<ItemStack> inventoryItems = (List)premadeKitSection.get("inventory");
-         List<ItemStack> armorItems = (List)premadeKitSection.get("armor");
-         ItemStack offhandItem = premadeKitSection.getItemStack("offhand");
+      ConfigurationSection section = configManager.getConfig(FILE).getConfigurationSection("premadekit");
+      if (section != null) {
+         List<ItemStack> inventoryItems = readItems(section, "inventory");
+         List<ItemStack> armorItems = readItems(section, "armor");
+         ItemStack offhandItem = section.getItemStack("offhand");
 
-         for(int i = 0; i < ((List)Objects.requireNonNull(inventoryItems)).size(); ++i) {
-            ItemStack item = (ItemStack)inventoryItems.get(i);
+         for(int i = 0; i < inventoryItems.size() && i < 41; ++i) {
+            ItemStack item = inventoryItems.get(i);
             if (item != null) {
                inventory.setItem(i, item);
             }
          }
 
-         for(int i = 0; i < ((List)Objects.requireNonNull(armorItems)).size(); ++i) {
-            ItemStack item = (ItemStack)armorItems.get(i);
+         for(int i = 0; i < armorItems.size() && i < 4; ++i) {
+            ItemStack item = armorItems.get(i);
             if (item != null) {
                inventory.setItem(i + 36, item);
             }
@@ -79,14 +76,30 @@ public class PremadeKitUtil implements PremadeKitAPI {
    }
 
    public void load(Player player) {
-      ConfigurationSection premadeKitSection = configManager.getConfig("data/premadekit.yml").getConfigurationSection("premadekit");
-      if (premadeKitSection != null) {
-         player.getInventory().clear();
-         player.getInventory().setContents((ItemStack[])((List)Objects.requireNonNull(premadeKitSection.get("inventory"))).toArray(new ItemStack[0]));
-         player.getInventory().setArmorContents((ItemStack[])((List)Objects.requireNonNull(premadeKitSection.get("armor"))).toArray(new ItemStack[0]));
-         ItemStack offhandItem = premadeKitSection.getItemStack("offhand");
+      ConfigurationSection section = configManager.getConfig(FILE).getConfigurationSection("premadekit");
+      List<ItemStack> inventoryItems = section == null ? new ArrayList<>() : readItems(section, "inventory");
+      List<ItemStack> armorItems = section == null ? new ArrayList<>() : readItems(section, "armor");
+      ItemStack offhandItem = section == null ? null : section.getItemStack("offhand");
+      boolean empty = inventoryItems.stream().allMatch((item) -> item == null) && armorItems.stream().allMatch((item) -> item == null) && offhandItem == null;
+      if (empty) {
+         Messages.send(player, "premade_kit_empty");
+      } else {
+         PlayerInventory inventory = player.getInventory();
+         inventory.clear();
+
+         for(int i = 0; i < inventoryItems.size() && i < 41; ++i) {
+            inventory.setItem(i, inventoryItems.get(i));
+         }
+
+         ItemStack[] armor = new ItemStack[4];
+
+         for(int i = 0; i < armorItems.size() && i < 4; ++i) {
+            armor[i] = armorItems.get(i);
+         }
+
+         inventory.setArmorContents(armor);
          if (offhandItem != null) {
-            player.getInventory().setItemInOffHand(offhandItem);
+            inventory.setItemInOffHand(offhandItem);
          }
 
          if (zbKits.getInstance().getConfig().getBoolean("broadcast.premadekit_load", true)) {
@@ -97,26 +110,30 @@ public class PremadeKitUtil implements PremadeKitAPI {
             }
          }
 
-         String loaded = zbKits.getInstance().getConfig().getString("messages.premade_kit_loaded");
-         if (loaded != null) {
-            player.sendMessage(ColorizeText.hex(loaded));
-         }
-      } else {
-         String empty = zbKits.getInstance().getConfig().getString("messages.premade_kit_empty");
-         if (empty != null) {
-            player.sendMessage(ColorizeText.hex(empty));
-         }
+         Messages.send(player, "premade_kit_loaded");
       }
 
    }
 
-   @CanIgnoreReturnValue
    public void saveAll() {
       try {
-         configManager.saveConfig("data/premadekit.yml");
+         configManager.saveConfig(FILE);
       } catch (Exception e) {
          this.logger.log(Level.SEVERE, "Failed to save premadekits file", e);
       }
 
+   }
+
+   /** Reads a saved item list. A missing, empty or damaged list gives an empty list; bad entries become null. */
+   private static List<ItemStack> readItems(ConfigurationSection section, String key) {
+      List<ItemStack> items = new ArrayList<>();
+      List<?> raw = section.getList(key);
+      if (raw != null) {
+         for(Object entry : raw) {
+            items.add(entry instanceof ItemStack stack ? stack : null);
+         }
+      }
+
+      return items;
    }
 }

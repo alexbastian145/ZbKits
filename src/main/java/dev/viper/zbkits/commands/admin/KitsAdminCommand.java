@@ -50,8 +50,8 @@ public class KitsAdminCommand extends ZarbunexCommand<zbKits> {
                   }
 
                   String kitName = (String)Stream.of(args).skip(2L).collect(Collectors.joining(" "));
-                  zbKits.getKitUtil().delete((Player)targetPlayer, kitName);
-                  zbKits.getEnderChestUtil().delete((Player)targetPlayer, kitName);
+                  zbKits.getKitUtil().delete(targetPlayer.getUniqueId(), kitName);
+                  zbKits.getEnderChestUtil().delete(targetPlayer.getUniqueId(), kitName);
                   Messages.send(executor, "kitsadmin_cleared", "%kit%", kitName, "%player%", targetPlayer.getName());
             }
 

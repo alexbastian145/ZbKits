@@ -49,49 +49,35 @@ public class KitViewMenu extends GuiBuilder {
    }
 
    public static void kit(Player executor, String targetPlayerName, String kitName) {
-      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetPlayerName);
-      Player targetPlayer = Bukkit.getPlayerExact(targetPlayerName);
-      if (targetPlayer != null) {
-         if (!offlinePlayer.isOnline()) {
-            executor.sendMessage(ColorizeText.mm("<&#ffa6a6>Player " + targetPlayerName + " is not online."));
-         } else {
-            GuiBuilder inventory = new GuiBuilder(45, targetPlayerName + " - " + kitName);
-            zbKits.getKitUtil().set(targetPlayer, kitName, inventory);
+      OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+      GuiBuilder inventory = new GuiBuilder(45, targetPlayerName + " - " + kitName);
+      zbKits.getKitUtil().set(target.getUniqueId(), kitName, inventory);
 
-            for(int i = 1; i <= 3; ++i) {
-               int slot = i + 40;
-               ItemStack filter = (new ItemBuilderGUI(Material.BLACK_STAINED_GLASS_PANE)).name(" ").flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
-               inventory.setItem(slot, filter);
-            }
-
-            ItemStack back = (new ItemBuilderGUI(Material.RED_STAINED_GLASS_PANE)).name(ColorizeText.mm("<#ffa6a6>Back")).flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
-            inventory.setItem(44, back, (p) -> openKitSelectMenu(executor, targetPlayerName));
-            inventory.open(executor);
-         }
+      for(int i = 1; i <= 3; ++i) {
+         int slot = i + 40;
+         ItemStack filter = (new ItemBuilderGUI(Material.BLACK_STAINED_GLASS_PANE)).name(" ").flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
+         inventory.setItem(slot, filter);
       }
+
+      ItemStack back = (new ItemBuilderGUI(Material.RED_STAINED_GLASS_PANE)).name(ColorizeText.mm("<#ffa6a6>Back")).flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
+      inventory.setItem(44, back, (p) -> openKitSelectMenu(executor, targetPlayerName));
+      inventory.open(executor);
    }
 
    public static void ec(Player executor, String targetPlayerName, String kitName) {
-      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetPlayerName);
-      Player targetPlayer = Bukkit.getPlayerExact(targetPlayerName);
-      if (targetPlayer != null) {
-         if (!offlinePlayer.isOnline()) {
-            executor.sendMessage(ColorizeText.mm("<&#ffa6a6>Player " + targetPlayerName + " is not online."));
-         } else {
-            GuiBuilder inventory = new GuiBuilder(36, targetPlayerName + " - Ender Chest" + kitName);
-            zbKits.getEnderChestUtil().set(targetPlayer, kitName, inventory);
+      OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+      GuiBuilder inventory = new GuiBuilder(36, targetPlayerName + " - Ender Chest" + kitName);
+      zbKits.getEnderChestUtil().set(target.getUniqueId(), kitName, inventory);
 
-            for(int i = 1; i <= 8; ++i) {
-               int slot = i + 26;
-               ItemStack filter = (new ItemBuilderGUI(Material.BLACK_STAINED_GLASS_PANE)).name(" ").flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
-               inventory.setItem(slot, filter);
-            }
-
-            ItemStack back = (new ItemBuilderGUI(Material.RED_STAINED_GLASS_PANE)).name(ColorizeText.mm("<#ffa6a6>Back")).flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
-            inventory.setItem(35, back, (p) -> openKitSelectMenu(executor, targetPlayerName));
-            inventory.open(executor);
-         }
+      for(int i = 1; i <= 8; ++i) {
+         int slot = i + 26;
+         ItemStack filter = (new ItemBuilderGUI(Material.BLACK_STAINED_GLASS_PANE)).name(" ").flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
+         inventory.setItem(slot, filter);
       }
+
+      ItemStack back = (new ItemBuilderGUI(Material.RED_STAINED_GLASS_PANE)).name(ColorizeText.mm("<#ffa6a6>Back")).flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).build();
+      inventory.setItem(35, back, (p) -> openKitSelectMenu(executor, targetPlayerName));
+      inventory.open(executor);
    }
 
    static {

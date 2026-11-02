@@ -4,6 +4,13 @@
 
 kits: 7
 
+# Ender chest handling. A kit can have its own ender chest saved in the ender chest editor.
+enderchest:
+  # true:  loading a kit also replaces your real ender chest with the ender chest saved for that kit
+  #        (kits without a saved ender chest leave your ender chest alone).
+  # false: loading a kit never touches your real ender chest.
+  load_with_kit: true
+
 broadcast:
   kit_load: true
   kit_load_message: "&#7cff6e%player% loaded %kit%."
@@ -27,6 +34,7 @@ messages:
 
   # Kit messages. Placeholders: %kit%, %player%, %category%. Set a message to "" to disable it.
   kit_empty: "&#ffa6a6%kit% is empty."
+  enderchest_overwritten: "&#ffd86eYour ender chest was replaced with the one saved for %kit%."
   kit_no_permission: "&#ffa6a6You don't have permission to use %kit%."
 
   # Kit room admin

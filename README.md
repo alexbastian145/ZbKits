@@ -21,7 +21,7 @@ A modern kits plugin for Crystal PvP servers on Paper. Players save up to a conf
 | Command | Description | Permission |
 |---|---|---|
 | `/kit` (`/k`) | Open the kits menu | |
-| `/kit1` ... `/kitN` (`/k1` ...) | Load a kit directly | `zbkits.kitN` |
+| `/kit1` ... `/kitN` (`/k1` ...) | Load a kit directly | `zbkits.kitN` (default: everyone) |
 | `/premadekit` | Load the premade kit | |
 | `/premadekit save` | Save your inventory as the premade kit | `zbkits.admin` |
 | `/autorekit` (`/autokit`) | Open the auto rekit menu | `zbkits.autorekit` |
@@ -30,13 +30,18 @@ A modern kits plugin for Crystal PvP servers on Paper. Players save up to a conf
 | `/kitsadmin clear <player> <kit name>` | Clear a player's kit | `zbkits.admin` |
 | `/zbkits reload` (`/zbk reload`) | Reload `config.yml` and the menu files | `zbkits.admin` |
 
+Permissions `zbkits.kit1` ... `zbkits.kitN` are registered automatically and default to true. Take one away with a permission plugin (for example LuckPerms) to lock that kit; this applies to the commands, the kits menu and auto rekit.
+
 The number of kit commands (`kits` in `config.yml`) is read at startup, so changing it needs a server restart. Everything else reloads with `/zbkits reload`.
 
 ## Configuration
 
-- `config.yml`: kit count, broadcasts, all messages, blacklisted WorldGuard regions
+- `config.yml`: kit count, ender chest handling, broadcasts, all messages, blacklisted WorldGuard regions
 - `menus/*.yml`: titles, sizes and items for every menu
-- `data/*.yml`: saved kits, ender chests, kit room, premade kit and auto rekit settings (generated, do not edit while the server is running)
+- `data/players/<uuid>.yml`: one file per player with their kits, kit ender chests and auto rekit settings (generated, do not edit while the server is running). Online players are kept in memory and only the file of the player that changed is written.
+- `data/kitroom.yml`, `data/premadekit.yml`: the kit room and the premade kit
+
+Servers that used an older version are migrated automatically on the first start: the old `data/kits.yml`, `data/enderchest.yml` and `data/autorekit.yml` are split into player files and renamed to `*.migrated`.
 
 ## Building
 

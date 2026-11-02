@@ -6,6 +6,8 @@ import dev.viper.zbkits.utils.KitRoomUtil;
 import dev.viper.zbkits.utils.KitUtil;
 import dev.viper.zbkits.utils.PremadeKitUtil;
 import dev.viper.zbkits.utils.config.ConfigManager;
+import dev.viper.zbkits.utils.data.PlayerDataManager;
+import dev.viper.zbkits.zbKits;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class KitsApiProvider {
@@ -17,11 +19,12 @@ public class KitsApiProvider {
 
    public static void init(JavaPlugin plugin) {
       ConfigManager configManager = ConfigManager.get(plugin);
-      kitsAPI = new KitUtil(configManager);
+      PlayerDataManager playerData = zbKits.getPlayerData();
+      kitsAPI = new KitUtil(playerData);
       premadeKitAPI = new PremadeKitUtil(configManager);
       kitRoomAPI = new KitRoomUtil(configManager);
-      enderChestAPI = new EnderChestUtil(configManager);
-      autoRekitAPI = new AutoRekitUtil(configManager);
+      enderChestAPI = new EnderChestUtil(playerData);
+      autoRekitAPI = new AutoRekitUtil(playerData);
    }
 
    public static KitsApiProvider get() {
