@@ -2,7 +2,7 @@ name: zbKits
 description: A modern kits plugin for the Crystal PvP server.
 main: dev.viper.zbkits.zbKits
 version: '1.0.4'
-api-version: '26.1'
+api-version: '1.21'
 website: https://xyris.fun/
 authors:
   - viper@zarbunex
