@@ -1,9 +1,9 @@
 package dev.viper.zbkits.commands.admin;
 
 import dev.viper.zbkits.zbKits;
+import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.menus.admin.KitViewMenu;
 import dev.viper.utils.command.ZarbunexCommand;
-import dev.viper.utils.text.color.ColorizeText;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,13 +31,13 @@ public class KitsAdminCommand extends ZarbunexCommand<zbKits> {
       } else if (args.length >= 2 && (args[0].equalsIgnoreCase("view") || args[0].equalsIgnoreCase("clear"))) {
          OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[1]);
          if (!targetPlayer.hasPlayedBefore() && !targetPlayer.isOnline()) {
-            executor.sendMessage(ColorizeText.hex("&#ffa6a6Player not found."));
+            Messages.send(executor, "player_not_found");
             return true;
          } else {
             switch (args[0].toLowerCase()) {
                case "view":
                   if (args.length != 2) {
-                     sender.sendMessage(ColorizeText.hex("&#ffa6a6Usage: /kitsadmin view <player>"));
+                     Messages.send(sender, "kitsadmin_view_usage");
                      return true;
                   }
 
@@ -45,20 +45,20 @@ public class KitsAdminCommand extends ZarbunexCommand<zbKits> {
                   break;
                case "clear":
                   if (args.length < 3) {
-                     sender.sendMessage(ColorizeText.hex("&#ffa6a6Usage: /kitsadmin clear <player> <kit name>"));
+                     Messages.send(sender, "kitsadmin_clear_usage");
                      return true;
                   }
 
                   String kitName = (String)Stream.of(args).skip(2L).collect(Collectors.joining(" "));
                   zbKits.getKitUtil().delete((Player)targetPlayer, kitName);
                   zbKits.getEnderChestUtil().delete((Player)targetPlayer, kitName);
-                  executor.sendMessage(ColorizeText.hex("&#7cff6e" + kitName + " has been cleared for player " + targetPlayer.getName() + "."));
+                  Messages.send(executor, "kitsadmin_cleared", "%kit%", kitName, "%player%", targetPlayer.getName());
             }
 
             return true;
          }
       } else {
-         sender.sendMessage(ColorizeText.hex("&#ffa6a6Usage: /kitsadmin <view/clear> <player> [kit name]"));
+         Messages.send(sender, "kitsadmin_usage");
          return true;
       }
    }

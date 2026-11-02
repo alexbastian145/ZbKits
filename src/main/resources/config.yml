@@ -25,6 +25,28 @@ messages:
   send_auto_rekit_message: true
   auto_rekit_message: "&#7cff6eAutomatically rekitted for you. Use /autorekit to toggle or edit the kit."
 
+  # Kit messages. Placeholders: %kit%, %player%, %category%. Set a message to "" to disable it.
+  kit_empty: "&#ffa6a6%kit% is empty."
+  kit_no_permission: "&#ffa6a6You don't have permission to use %kit%."
+
+  # Kit room admin
+  kitroom_category_saved: "&#7cff6eKit room category %category% saved!"
+  kitroom_category_cleared: "&#7cff6eKit room category %category% cleared."
+  kitroomadmin_usage: "&#ffa6a6Usage: /kitroomadmin <add/clear> <category>"
+  kitroomadmin_invalid: "&#ffa6a6Invalid category or action."
+
+  # Kits admin
+  player_not_found: "&#ffa6a6Player not found."
+  kitsadmin_usage: "&#ffa6a6Usage: /kitsadmin <view/clear> <player> [kit name]"
+  kitsadmin_view_usage: "&#ffa6a6Usage: /kitsadmin view <player>"
+  kitsadmin_clear_usage: "&#ffa6a6Usage: /kitsadmin clear <player> <kit name>"
+  kitsadmin_cleared: "&#7cff6e%kit% has been cleared for player %player%."
+
+  # /zbkits
+  reload_success: "&#7cff6ezbKits config and menus reloaded."
+  reload_kits_note: "&#ffd86eThe 'kits' amount only changes after a server restart."
+  zbkits_usage: "&#ffa6a6Usage: /zbkits reload"
+
 blacklisted_regions:
   - "arena1"
   - "arena2"

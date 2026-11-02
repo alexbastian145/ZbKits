@@ -1,4 +1,4 @@
-package dev.viper.utils.servers.server.papermc.paper.registery.papermc.spigotmc.bukkit.sponge.paperrmc.viper.zarbunexkits.util;
+package dev.viper.zbkits.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

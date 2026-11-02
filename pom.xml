@@ -14,8 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Java 21 bytecode runs on 1.21.x (Java 21) and on 26.x (Java 25) servers -->
         <java.release>21</java.release>
-        <!-- Oldest supported API: calls newer than 1.21 then fail at build time -->
-        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
+        <!-- Compile against the 1.21.11 API. plugin.yml keeps api-version 1.21, so the jar loads on 1.21 - 26.x servers -->
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
     </properties>
 
     <repositories>

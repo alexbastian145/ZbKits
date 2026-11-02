@@ -123,7 +123,7 @@ public class KitUtil implements KitsAPI {
 
             zbKits.getEnderChestUtil().load(player, kitName);
          } else {
-            player.sendMessage(ColorizeText.hex("&#ffa6a6" + kitName + " is empty."));
+            Messages.send(player, "kit_empty", "%kit%", kitName);
          }
       }
 

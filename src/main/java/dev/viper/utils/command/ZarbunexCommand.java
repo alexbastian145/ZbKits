@@ -1,6 +1,7 @@
 package dev.viper.utils.command;
 
 import java.lang.reflect.Field;
+import dev.viper.utils.text.color.ColorizeText;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -90,8 +91,13 @@ public abstract class ZarbunexCommand<T extends JavaPlugin> extends Command impl
          ZarbunexCommand<?> subcommand = (ZarbunexCommand)this.subcommands.get(arg[0]);
          return subcommand.execute(sender, command, (String[])Arrays.copyOfRange(arg, 1, arg.length));
       } else if (this.getPermission() != null && !sender.hasPermission(this.getPermission())) {
-         String var5 = String.valueOf(ChatColor.RED);
-         sender.sendMessage(var5 + (this.getPermissionMessage() != null ? this.getPermissionMessage() : "You don't have permission to execute this command!"));
+         String configured = this.plugin.getConfig().getString("messages.no_permission");
+         if (configured != null && !configured.isEmpty()) {
+            sender.sendMessage(ColorizeText.hex(configured));
+         } else if (this.getPermissionMessage() != null) {
+            sender.sendMessage(String.valueOf(ChatColor.RED) + this.getPermissionMessage());
+         }
+
          return false;
       } else if (this.onCommand(sender, this, command, arg)) {
          return true;

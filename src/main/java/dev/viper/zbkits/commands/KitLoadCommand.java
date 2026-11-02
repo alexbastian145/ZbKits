@@ -1,6 +1,7 @@
 package dev.viper.zbkits.commands;
 
 import dev.viper.zbkits.zbKits;
+import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.hooks.worldguard.WorldGuardHook;
 import dev.viper.zbkits.utils.wg.BlacklistedRegion;
 import dev.viper.utils.command.ZarbunexCommand;
@@ -34,7 +35,7 @@ public class KitLoadCommand extends ZarbunexCommand<zbKits> {
                   if (player.hasPermission("zbkits." + cmdName)) {
                      zbKits.getKitUtil().load(player, "Kit " + i);
                   } else {
-                     player.sendMessage(ColorizeText.hex("&#ffa6a6You don't have permission to use Kit " + i + "."));
+                     Messages.send(player, "kit_no_permission", "%kit%", "Kit " + i);
                   }
 
                   return true;

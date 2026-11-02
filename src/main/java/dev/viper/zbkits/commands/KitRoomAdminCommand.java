@@ -1,9 +1,9 @@
 package dev.viper.zbkits.commands;
 
 import dev.viper.zbkits.zbKits;
+import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.menus.KitRoomAdmin;
 import dev.viper.utils.command.ZarbunexCommand;
-import dev.viper.utils.text.color.ColorizeText;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -31,7 +31,7 @@ public class KitRoomAdminCommand extends ZarbunexCommand<zbKits> {
    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
       if (sender instanceof Player player) {
          if (args.length != 2 && player.hasPermission("zbkits.admin")) {
-            sender.sendMessage(ColorizeText.hex("&#ffa6a6Usage: /kitroomadmin <add/clear> <category>"));
+            Messages.send(sender, "kitroomadmin_usage");
             return false;
          } else {
             String action = args[0].toLowerCase();
@@ -41,12 +41,12 @@ public class KitRoomAdminCommand extends ZarbunexCommand<zbKits> {
                   KitRoomAdmin.openAdminKitRoom(player, category);
                } else if ("clear".equals(action)) {
                   zbKits.getKitRoomUtil().delete(category);
-                  player.sendMessage(ColorizeText.hex("&#7cff6eKit room category " + category + " cleared."));
+                  Messages.send(player, "kitroom_category_cleared", "%category%", category);
                }
 
                return true;
             } else {
-               sender.sendMessage(ColorizeText.hex("&#ffa6a6Invalid category or action."));
+               Messages.send(sender, "kitroomadmin_invalid");
                return false;
             }
          }

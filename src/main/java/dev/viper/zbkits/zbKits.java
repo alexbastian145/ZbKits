@@ -5,6 +5,7 @@ import dev.viper.zbkits.commands.KitCommand;
 import dev.viper.zbkits.commands.KitLoadCommand;
 import dev.viper.zbkits.commands.KitRoomAdminCommand;
 import dev.viper.zbkits.commands.PremadeKitCommand;
+import dev.viper.zbkits.commands.ZbKitsCommand;
 import dev.viper.zbkits.commands.admin.KitsAdminCommand;
 import dev.viper.zbkits.hooks.HooksImpl;
 import dev.viper.zbkits.hooks.Metrics;
@@ -62,6 +63,7 @@ public final class zbKits extends PluginWrapper {
       new PremadeKitCommand(this);
       new AutoRekitCommand(this);
       new KitsAdminCommand(this);
+      new ZbKitsCommand(this);
       int kits = this.getConfig().getInt("kits");
 
       for(int i = 1; i <= kits; ++i) {

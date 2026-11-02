@@ -3,7 +3,6 @@ package dev.viper.zbkits.utils;
 import dev.viper.zbkits.api.KitRoomAPI;
 import dev.viper.zbkits.utils.config.ConfigManager;
 import dev.viper.utils.menu.xmenu.GuiBuilder;
-import dev.viper.utils.text.color.ColorizeText;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Material;
@@ -38,7 +37,7 @@ public class KitRoomUtil implements KitRoomAPI {
 
       try {
          configManager.saveConfig("data/kitroom.yml");
-         player.sendMessage(ColorizeText.hex("&#7cff6eKit room category " + category + " saved!"));
+         Messages.send(player, "kitroom_category_saved", "%category%", category);
       } catch (Exception e) {
          this.logger.log(Level.SEVERE, "Failed to save category", e);
       }
