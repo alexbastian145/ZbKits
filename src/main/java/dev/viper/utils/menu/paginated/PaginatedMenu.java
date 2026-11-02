@@ -1,5 +1,6 @@
 package dev.viper.utils.menu.paginated;
 
+import org.bukkit.scheduler.BukkitTask;
 import dev.viper.utils.item.ItemBuilder;
 import dev.viper.utils.library.Utils;
 import dev.viper.utils.menu.Button;
@@ -217,7 +218,7 @@ public class PaginatedMenu implements InventoryHolder, MenuBase<PaginatedMenu> {
             if (!button.isRefreshingButton()) {
                this.inventory.setItem(this.pageSlotHolderByButton(button).slot(), button.item().build());
             } else {
-               Schedulers.builder((Consumer)((task) -> {
+               Schedulers.builder((Consumer<BukkitTask>)((task) -> {
                   if (player.getOpenInventory().getTopInventory() != this.getInventory()) {
                      task.cancel();
                   } else if (this.pageSlotHolderByButton(button).page() != this.currentPage) {

@@ -47,7 +47,7 @@ final class PaperCommodore extends AbstractCommodore implements Commodore, Liste
          if (node.getLiteral().equals(alias)) {
             this.commands.add(new CommodoreCommand(node, permissionTest));
          } else {
-            LiteralCommandNode<Object> redirectNode = ((LiteralArgumentBuilder)LiteralArgumentBuilder.literal(alias).redirect(node)).build();
+            LiteralCommandNode<?> redirectNode = LiteralArgumentBuilder.<Object>literal(alias).redirect((com.mojang.brigadier.tree.CommandNode<Object>)(com.mojang.brigadier.tree.CommandNode<?>)node).build();
             this.commands.add(new CommodoreCommand(redirectNode, permissionTest));
          }
       }
@@ -87,7 +87,7 @@ final class PaperCommodore extends AbstractCommodore implements Commodore, Liste
       public void apply(Player player, RootCommandNode<?> root) {
          if (this.permissionTest == null || this.permissionTest.test(player)) {
             AbstractCommodore.removeChild(root, this.node.getName());
-            root.addChild(this.node);
+            ((RootCommandNode<Object>)root).addChild((com.mojang.brigadier.tree.CommandNode<Object>)(com.mojang.brigadier.tree.CommandNode<?>)this.node);
          }
       }
    }

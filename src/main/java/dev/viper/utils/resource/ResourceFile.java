@@ -1,5 +1,6 @@
 package dev.viper.utils.resource;
 
+import org.bukkit.scheduler.BukkitTask;
 import dev.viper.utils.library.Utils;
 import dev.viper.utils.resource.format.ResourceFormat;
 import dev.viper.utils.resource.format.ResourceFormats;
@@ -55,7 +56,7 @@ public class ResourceFile {
       if (!Objects.equals(this.format(), ResourceFormats.yaml()) && !Objects.equals(this.format(), ResourceFormats.yml())) {
          throw new UnsupportedOperationException("only yaml files are supported for saveOrLoad()");
       } else {
-         Schedulers.async().execute((Consumer)((task) -> {
+         Schedulers.async().execute((Consumer<BukkitTask>)((task) -> {
             try {
                this.file().mkdirs();
                this.file().createNewFile();
@@ -72,7 +73,7 @@ public class ResourceFile {
       if (!Objects.equals(this.format(), ResourceFormats.yaml()) && !Objects.equals(this.format(), ResourceFormats.yml())) {
          throw new UnsupportedOperationException("only yaml files are supported for saveOrLoad()");
       } else {
-         Schedulers.async().execute((Consumer)((task) -> {
+         Schedulers.async().execute((Consumer<BukkitTask>)((task) -> {
             if (this.file().exists()) {
                FileConfiguration configuration = YamlConfiguration.loadConfiguration(this.file());
             } else {

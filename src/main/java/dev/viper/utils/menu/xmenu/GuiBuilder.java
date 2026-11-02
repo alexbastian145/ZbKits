@@ -29,19 +29,19 @@ public class GuiBuilder implements InventoryHolder {
    private Predicate<Player> closeFilter;
 
    public GuiBuilder(int size) {
-      this((Function)((owner) -> Bukkit.createInventory(owner, size)));
+      this((Function<InventoryHolder, Inventory>)((owner) -> Bukkit.createInventory(owner, size)));
    }
 
    public GuiBuilder(int size, String title) {
-      this((Function)((owner) -> Bukkit.createInventory(owner, size, title)));
+      this((Function<InventoryHolder, Inventory>)((owner) -> Bukkit.createInventory(owner, size, title)));
    }
 
    public GuiBuilder(InventoryType type) {
-      this((Function)((owner) -> Bukkit.createInventory(owner, type)));
+      this((Function<InventoryHolder, Inventory>)((owner) -> Bukkit.createInventory(owner, type)));
    }
 
    public GuiBuilder(InventoryType type, String title) {
-      this((Function)((owner) -> Bukkit.createInventory(owner, type, title)));
+      this((Function<InventoryHolder, Inventory>)((owner) -> Bukkit.createInventory(owner, type, title)));
    }
 
    public GuiBuilder(Function<InventoryHolder, Inventory> inventoryFunction) {

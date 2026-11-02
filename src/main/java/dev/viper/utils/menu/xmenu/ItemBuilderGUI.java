@@ -48,7 +48,7 @@ public class ItemBuilderGUI {
    public <T extends ItemMeta> ItemBuilderGUI meta(Class<T> metaClass, Consumer<T> metaConsumer) {
       return this.meta((meta) -> {
          if (metaClass.isInstance(meta)) {
-            metaConsumer.accept((ItemMeta)metaClass.cast(meta));
+            metaConsumer.accept(metaClass.cast(meta));
          }
 
       });
@@ -84,7 +84,7 @@ public class ItemBuilderGUI {
 
    public ItemBuilderGUI removeEnchants() {
       return this.meta((m) -> {
-         Set var10000 = m.getEnchants().keySet();
+         Set<Enchantment> var10000 = m.getEnchants().keySet();
          Objects.requireNonNull(m);
          var10000.forEach(m::removeEnchant);
       });

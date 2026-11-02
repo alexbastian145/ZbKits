@@ -44,7 +44,7 @@ public class PlayerUtils {
    }
 
    public static void clearChat(@NotNull Player player, int count) {
-      Stream var10000 = IntStream.range(0, count).mapToObj((i) -> "");
+      Stream<String> var10000 = IntStream.range(0, count).mapToObj((i) -> "");
       Objects.requireNonNull(player);
       var10000.forEach(player::sendMessage);
    }
@@ -103,7 +103,7 @@ public class PlayerUtils {
    }
 
    public static void clearPotionEffects(@NotNull Player player) {
-      Stream var10000 = player.getActivePotionEffects().stream().map(PotionEffect::getType);
+      Stream<org.bukkit.potion.PotionEffectType> var10000 = player.getActivePotionEffects().stream().map(PotionEffect::getType);
       Objects.requireNonNull(player);
       var10000.forEach(player::removePotionEffect);
    }

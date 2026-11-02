@@ -1,5 +1,6 @@
 package dev.viper.utils.menu.normal;
 
+import org.bukkit.scheduler.BukkitTask;
 import dev.viper.utils.item.ItemBuilder;
 import dev.viper.utils.library.Utils;
 import dev.viper.utils.menu.Button;
@@ -68,7 +69,7 @@ public class Menu implements InventoryHolder, MenuBase<Menu> {
 
       for(Button button : this.buttons.values()) {
          if (button.isRefreshingButton()) {
-            Schedulers.builder((Consumer)((task) -> {
+            Schedulers.builder((Consumer<BukkitTask>)((task) -> {
                if (player.getOpenInventory().getTopInventory() != this.getInventory()) {
                   task.cancel();
                } else {

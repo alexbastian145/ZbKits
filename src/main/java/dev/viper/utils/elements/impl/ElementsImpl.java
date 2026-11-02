@@ -104,9 +104,9 @@ public class ElementsImpl<E> implements Elements<E>, Iterable<E> {
    }
 
    public void delAllNull() {
-      this.forEach((PairConsumer)((at, what) -> {
+      this.forEach((PairConsumer<Integer, E>)((at, what) -> {
          if (what == null) {
-            this.del(at);
+            this.del(at.intValue());
          }
 
       }));

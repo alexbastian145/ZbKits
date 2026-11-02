@@ -52,12 +52,12 @@ public class Tiers {
                   JsonObject rankings = jsonResponse.getAsJsonObject("rankings");
                   JsonObject tierObject = rankings.getAsJsonObject(tierName);
                   if (tierObject != null) {
-                     int tierValue = tierObject.get("tier").getAsInt();
+                     int tierNum = tierObject.get("tier").getAsInt();
                      int pos = tierObject.get("pos").getAsInt();
                      boolean retiredBoolean = tierObject.get("retired").getAsBoolean();
                      String retired = retiredBoolean ? "R" : "";
                      String position = pos == 0 ? "HT" : "LT";
-                     var18 = retired + position + tierValue;
+                     var18 = retired + position + tierNum;
                      break label55;
                   }
 

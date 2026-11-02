@@ -79,7 +79,7 @@ final class ReflectionCommodore extends AbstractCommodore implements Commodore {
          if (node.getLiteral().equals(alias)) {
             this.register(node);
          } else {
-            this.register(((LiteralArgumentBuilder)LiteralArgumentBuilder.literal(alias).redirect(node)).build());
+            this.register(LiteralArgumentBuilder.<Object>literal(alias).redirect((com.mojang.brigadier.tree.CommandNode<Object>)(com.mojang.brigadier.tree.CommandNode<?>)node).build());
          }
       }
 

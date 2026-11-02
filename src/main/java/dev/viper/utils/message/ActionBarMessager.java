@@ -1,5 +1,6 @@
 package dev.viper.utils.message;
 
+import org.bukkit.scheduler.BukkitTask;
 import dev.viper.utils.scheduler.Schedulers;
 import dev.viper.utils.server.Servers;
 import dev.viper.utils.text.color.TextStyle;
@@ -28,7 +29,7 @@ public class ActionBarMessager {
    }
 
    public void send(@NotNull Component text, int after, int every) {
-      Schedulers.async().execute((Consumer)((task) -> this.send(text)), after, every);
+      Schedulers.async().execute((Consumer<BukkitTask>)((task) -> this.send(text)), after, every);
    }
 
    public void broadcast(@NotNull Component text) {
