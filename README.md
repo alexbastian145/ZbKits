@@ -48,4 +48,4 @@ The jar is written to `target/`. Requires JDK 21.
 
 ## Support
 
-https://xyris.fun/devs/
+https://discord.gg/dvRN4FabDq
