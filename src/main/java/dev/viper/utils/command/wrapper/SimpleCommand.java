@@ -84,7 +84,7 @@ public abstract class SimpleCommand extends Command {
       } else {
          int index = args.length - 1;
          if ((this.getPermission() == null || sender.hasPermission(this.getPermission())) && !this.tabComplete.isEmpty() && this.tabComplete.containsKey(index)) {
-            List<String> suggestions = (List)((List)this.tabComplete.get(index)).stream().filter((tabCommand) -> tabCommand.getTextAvant() == null || tabCommand.getTextAvant().contains(args[index - 1])).filter((tabCommand) -> tabCommand.getPermission() == null || sender.hasPermission(tabCommand.getPermission())).filter((tabCommand) -> tabCommand.getText().startsWith(args[index])).map(TabCommand::getText).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
+            List<String> suggestions = (List)this.tabComplete.get(index).stream().filter((tabCommand) -> tabCommand.getTextAvant() == null || tabCommand.getTextAvant().contains(args[index - 1])).filter((tabCommand) -> tabCommand.getPermission() == null || sender.hasPermission(tabCommand.getPermission())).filter((tabCommand) -> tabCommand.getText().startsWith(args[index])).map(TabCommand::getText).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
             return suggestions.isEmpty() ? super.tabComplete(sender, alias, args) : suggestions;
          } else {
             return super.tabComplete(sender, alias, args);

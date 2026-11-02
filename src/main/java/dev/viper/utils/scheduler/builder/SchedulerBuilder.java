@@ -63,7 +63,7 @@ public class SchedulerBuilder {
             if (this.config.everyTicks() == null && this.config.afterTicks() == null) {
                Object var23 = this.schedulerTask.appropriate();
                if (var23 instanceof Consumer) {
-                  Consumer<?> consumer = (Consumer)var23;
+                  Consumer<BukkitTask> consumer = (Consumer<BukkitTask>)var23;
                   Schedulers.sync().execute(consumer);
                } else {
                   var23 = this.schedulerTask.appropriate();
@@ -75,7 +75,7 @@ public class SchedulerBuilder {
             } else if (this.config.everyTicks() == null && this.config.afterTicks() != null) {
                Object var21 = this.schedulerTask.appropriate();
                if (var21 instanceof Consumer) {
-                  Consumer<?> consumer = (Consumer)var21;
+                  Consumer<BukkitTask> consumer = (Consumer<BukkitTask>)var21;
                   Schedulers.sync().execute(consumer, this.config.afterTicks());
                } else {
                   var21 = this.schedulerTask.appropriate();
@@ -91,7 +91,7 @@ public class SchedulerBuilder {
 
                Object var19 = this.schedulerTask.appropriate();
                if (var19 instanceof Consumer) {
-                  Consumer<?> consumer = (Consumer)var19;
+                  Consumer<BukkitTask> consumer = (Consumer<BukkitTask>)var19;
                   Schedulers.sync().execute(consumer, this.config.afterTicks(), this.config.everyTicks());
                } else {
                   var19 = this.schedulerTask.appropriate();
@@ -106,7 +106,7 @@ public class SchedulerBuilder {
             if (this.config.everyTicks() == null && this.config.afterTicks() == null) {
                Object taskConsumer = this.schedulerTask.appropriate();
                if (taskConsumer instanceof Consumer) {
-                  Consumer<?> consumer = (Consumer)taskConsumer;
+                  Consumer<BukkitTask> consumer = (Consumer<BukkitTask>)taskConsumer;
                   Schedulers.async().execute(consumer);
                } else {
                   taskConsumer = this.schedulerTask.appropriate();
@@ -118,7 +118,7 @@ public class SchedulerBuilder {
             } else if (this.config.everyTicks() == null && this.config.afterTicks() != null) {
                Object taskConsumer = this.schedulerTask.appropriate();
                if (taskConsumer instanceof Consumer) {
-                  Consumer<?> consumer = (Consumer)taskConsumer;
+                  Consumer<BukkitTask> consumer = (Consumer<BukkitTask>)taskConsumer;
                   Schedulers.async().execute(consumer, this.config.afterTicks());
                } else {
                   taskConsumer = this.schedulerTask.appropriate();
@@ -134,7 +134,7 @@ public class SchedulerBuilder {
 
                Object taskConsumer = this.schedulerTask.appropriate();
                if (taskConsumer instanceof Consumer) {
-                  Consumer<?> consumer = (Consumer)taskConsumer;
+                  Consumer<BukkitTask> consumer = (Consumer<BukkitTask>)taskConsumer;
                   Schedulers.async().execute(consumer, this.config.afterTicks(), this.config.everyTicks());
                } else {
                   taskConsumer = this.schedulerTask.appropriate();

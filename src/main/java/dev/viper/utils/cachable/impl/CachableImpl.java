@@ -74,7 +74,7 @@ public class CachableImpl<K, V> implements Cachable<K, V> {
    }
 
    public void forEach(PairConsumer<K, V> forEach) {
-      Map var10000 = this.cache;
+      Map<K, V> var10000 = this.cache;
       Objects.requireNonNull(forEach);
       var10000.forEach(forEach::execute);
    }
