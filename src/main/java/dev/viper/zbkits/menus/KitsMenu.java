@@ -1,5 +1,6 @@
 package dev.viper.zbkits.menus;
 
+import dev.viper.zbkits.utils.Materials;
 import dev.viper.utils.compat.Compat;
 import dev.viper.zbkits.zbKits;
 import dev.viper.zbkits.utils.Messages;
@@ -60,7 +61,7 @@ public class KitsMenu extends GuiBuilder {
       }
 
       List<Integer> filterSlots = CONFIG.getConfig().getIntegerList("kits_menu.filter.slots");
-      ItemStack filter = (new ItemBuilderGUI(Material.valueOf(filterMaterial))).name(filterName).flags((ItemFlag[])filterFlags.toArray(new ItemFlag[0])).build();
+      ItemStack filter = (new ItemBuilderGUI(Materials.parse(filterMaterial))).name(filterName).flags((ItemFlag[])filterFlags.toArray(new ItemFlag[0])).build();
 
       for(int slot : filterSlots) {
          inventory.setItem(slot, filter);
@@ -102,7 +103,7 @@ public class KitsMenu extends GuiBuilder {
             }
          }
 
-         ItemStack item = (new ItemBuilderGUI(Material.valueOf(itemMaterial))).name(ColorizeText.hex(itemName)).lore((String[])finalLore.toArray(new String[0])).flags((ItemFlag[])flags.toArray(new ItemFlag[0])).build();
+         ItemStack item = (new ItemBuilderGUI(Materials.parse(itemMaterial))).name(ColorizeText.hex(itemName)).lore((String[])finalLore.toArray(new String[0])).flags((ItemFlag[])flags.toArray(new ItemFlag[0])).build();
          inventory.setItem(slot, item, (e) -> {
             if (e.isRightClick()) {
                if (configPath.equals("kits_menu.kits")) {
@@ -176,7 +177,7 @@ public class KitsMenu extends GuiBuilder {
          }
       }
 
-      ItemStack item = (new ItemBuilderGUI(Material.valueOf(itemMaterial))).name(ColorizeText.hex(itemName)).flags((ItemFlag[])flags.toArray(new ItemFlag[0])).flags(ItemFlag.HIDE_ATTRIBUTES).lore((String[])finalLore.toArray(new String[0])).build();
+      ItemStack item = (new ItemBuilderGUI(Materials.parse(itemMaterial))).name(ColorizeText.hex(itemName)).flags((ItemFlag[])flags.toArray(new ItemFlag[0])).flags(ItemFlag.HIDE_ATTRIBUTES).lore((String[])finalLore.toArray(new String[0])).build();
 
       for(Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
          item.addUnsafeEnchantment((Enchantment)entry.getKey(), (Integer)entry.getValue());

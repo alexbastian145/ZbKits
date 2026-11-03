@@ -1,5 +1,6 @@
 package dev.viper.zbkits.menus;
 
+import dev.viper.zbkits.utils.Materials;
 import dev.viper.utils.compat.Compat;
 import dev.viper.zbkits.zbKits;
 import dev.viper.zbkits.utils.config.MenuConfig;
@@ -103,7 +104,7 @@ public class KitEditorMenu extends GuiBuilder {
          }
       }
 
-      ItemStack item = (new ItemBuilderGUI(Material.valueOf(itemMaterial))).name(ColorizeText.hex(itemName)).flags((ItemFlag[])flags.toArray(new ItemFlag[0])).lore((String[])finalLore.toArray(new String[0])).build();
+      ItemStack item = (new ItemBuilderGUI(Materials.parse(itemMaterial))).name(ColorizeText.hex(itemName)).flags((ItemFlag[])flags.toArray(new ItemFlag[0])).lore((String[])finalLore.toArray(new String[0])).build();
 
       for(Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
          item.addUnsafeEnchantment((Enchantment)entry.getKey(), (Integer)entry.getValue());

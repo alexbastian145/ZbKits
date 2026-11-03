@@ -1,5 +1,6 @@
 package dev.viper.zbkits.listeners;
 
+import dev.viper.zbkits.menus.KitRoomMenu;
 import dev.viper.zbkits.zbKits;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,5 +21,7 @@ public class PlayerDataListener implements Listener {
    @EventHandler(priority = EventPriority.MONITOR)
    public void onQuit(PlayerQuitEvent e) {
       zbKits.getPlayerData().unload(e.getPlayer().getUniqueId());
+      KitRoomMenu.setCurrentCategory(e.getPlayer(), null);
+      AutoRekitListener.forget(e.getPlayer());
    }
 }

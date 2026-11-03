@@ -8,7 +8,6 @@ import dev.viper.zbkits.commands.PremadeKitCommand;
 import dev.viper.zbkits.commands.ZbKitsCommand;
 import dev.viper.zbkits.commands.admin.KitsAdminCommand;
 import dev.viper.zbkits.hooks.HooksImpl;
-import dev.viper.zbkits.hooks.Metrics;
 import dev.viper.zbkits.listeners.AutoRekitAnchorListener;
 import dev.viper.zbkits.listeners.AutoRekitListener;
 import dev.viper.zbkits.listeners.PlayerDataListener;
@@ -81,7 +80,6 @@ public final class zbKits extends PluginWrapper {
          new KitLoadCommand(this, "kit" + i, i);
       }
 
-      new Metrics(this, 22161);
       HooksImpl.of(this);
       log.sendMessage(ColorizeText.hex("&c&lzbKits &7› &fThe &#ff2e2eplugin &fhas been successfully enabled, created by &#ff2e2ezarbunex &fwith &#ff2e2e❤"));
       log.sendMessage(ColorizeText.hex("&c&lzbKits &7› &fJoin our &#ff2e2esupport server &fat &#ff2e2ehttps://discord.gg/dvRN4FabDq"));

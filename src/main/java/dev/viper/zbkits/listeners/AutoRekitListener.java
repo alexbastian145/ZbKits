@@ -5,19 +5,47 @@ import dev.viper.zbkits.hooks.worldguard.WorldGuardHook;
 import dev.viper.zbkits.utils.Messages;
 import dev.viper.zbkits.utils.wg.BlacklistedRegion;
 import dev.viper.utils.event.crystal.PlayerCrystalDeathEvent;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class AutoRekitListener implements Listener {
+   /**
+    * A single kill can raise several events (the normal death, the crystal death and the anchor
+    * death), so a player is rekitted at most once per this many milliseconds.
+    */
+   private static final long REKIT_WINDOW_MS = 1000L;
+   private static final Map<UUID, Long> lastRekit = new ConcurrentHashMap<>();
+
+   /** Forgets a player's dedupe timestamp (call when they leave). */
+   public static void forget(Player player) {
+      lastRekit.remove(player.getUniqueId());
+   }
+
    /** Reloads the player's chosen kit. Must run on the thread that owns the player. */
    public static void load(Player player) {
       if (!WorldGuardHook.get().isEnabled() || !BlacklistedRegion.isInBlacklistedRegion(player)) {
          String kit = zbKits.getAutoRekitUtil().getKit(player);
-         if (zbKits.getKitUtil().canUse(player, kit)) {
-            rekit(player, kit);
+         if (!zbKits.getKitUtil().canUse(player, kit)) {
+            return;
          }
+
+         // Nothing saved in that kit: skip quietly instead of sending "kit is empty" on every kill.
+         if (!zbKits.getKitUtil().exists(player, kit)) {
+            return;
+         }
+
+         long now = System.currentTimeMillis();
+         Long previous = lastRekit.put(player.getUniqueId(), now);
+         if (previous != null && now - previous < REKIT_WINDOW_MS) {
+            return;
+         }
+
+         rekit(player, kit);
       }
    }
 
