@@ -14,7 +14,7 @@ public class WorldGuardHook {
       Plugin worldGuardPlugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
       if (worldGuardPlugin != null) {
          FileConfiguration config = zbKits.getInstance().getConfig();
-         config.addDefault("blacklisted_regions", new String[]{"swordffa", "netheritepotion"});
+         config.addDefault("blacklisted_regions", new String[]{"arena1", "arena2"});
          config.options().copyDefaults(true);
          zbKits.getInstance().saveConfig();
       }

@@ -1,5 +1,6 @@
 package dev.viper.zbkits.menus;
 
+import dev.viper.zbkits.utils.Materials;
 import dev.viper.zbkits.zbKits;
 import dev.viper.zbkits.api.events.KitRoomOpenEvent;
 import dev.viper.zbkits.utils.config.MenuConfig;
@@ -31,21 +32,21 @@ public class KitRoomMenu extends GuiBuilder {
       inventory.addOpenHandler((event) -> {
          if (zbKits.getInstance().getConfig().getBoolean("broadcast.kitroom_open", true)) {
             String bcastLoaded = zbKits.getInstance().getConfig().getString("broadcast.kitroom_open_message");
-
-            assert bcastLoaded != null;
-
-            bcastLoaded = bcastLoaded.replace("%player%", player.getName());
-            Bukkit.broadcastMessage(ColorizeText.hex(bcastLoaded));
-            Bukkit.getServer().getPluginManager().callEvent(new KitRoomOpenEvent(player));
+            if (bcastLoaded != null && !bcastLoaded.isEmpty()) {
+               bcastLoaded = bcastLoaded.replace("%player%", player.getName());
+               Bukkit.broadcastMessage(ColorizeText.hex(bcastLoaded));
+            }
          }
 
+         // The API event fires whether or not the broadcast is enabled.
+         Bukkit.getServer().getPluginManager().callEvent(new KitRoomOpenEvent(player));
       });
       ConfigurationSection itemsSection = CONFIG.getConfig().getConfigurationSection("kit_room.items");
       if (itemsSection != null) {
          for(String key : itemsSection.getKeys(false)) {
             ConfigurationSection itemSection = itemsSection.getConfigurationSection(key);
             if (itemSection != null) {
-               Material material = Material.valueOf(itemSection.getString("material", "STONE"));
+               Material material = Materials.parse(itemSection.getString("material", "STONE"));
                String name = itemSection.getString("name", "Item");
                List<String> lore = itemSection.getStringList("lore");
                List<Integer> slots = itemSection.getIntegerList("slots");
